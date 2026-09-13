@@ -4,69 +4,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#96cfc6">
-  <meta name="description" content="이화미술공작소 EWHA ART. 아이의 생각과 표현을 키우는 유아·초등·중등 미술교육.">
+  <meta name="theme-color" content="#244c47">
+  <meta name="description" content="이화미술공작소 EWHA ART. 아이의 생각과 표현을 키우는 유아·초등·중등 미술교육. 인스타그램 @ewha_art_min">
   <title>이화미술공작소 | EWHA ART</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --ivory: #fbfaf6;
       --cream: #f4efe5;
       --sage: #cddfd8;
+      --sage-light: #eaf2ef;
       --mint: #9fd8cf;
-      --mint-strong: #65b9ac;
+      --mint-strong: #2e7d73;
       --forest: #244c47;
       --ink: #243230;
       --sub: #6d7976;
       --rose: #ead8d7;
+      --rose-light: #f6eceb;
       --line: #e7e4dc;
       --white: #ffffff;
+      --insta-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      --blue-badge: #0095f6;
+      --heart-red: #ed4956;
     }
 
     * {
-      box-sizing: border-box
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html {
-      scroll-behavior: smooth
+      scroll-behavior: smooth;
     }
 
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--ivory);
       color: var(--ink);
-      line-height: 1.7
+      line-height: 1.7;
+      overflow-x: hidden;
     }
 
     img {
       display: block;
-      max-width: 100%
+      max-width: 100%;
     }
 
     a {
       text-decoration: none;
-      color: inherit
+      color: inherit;
     }
 
     .wrap {
       width: min(1180px, calc(100% - 48px));
-      margin: auto
+      margin: auto;
     }
 
+    /* 1. 상단 네비게이션 */
     .top {
       position: sticky;
       top: 0;
-      z-index: 50;
-      background: rgba(251, 250, 246, .93);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(36, 76, 71, .08)
+      z-index: 100;
+      background: rgba(251, 250, 246, 0.95);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(36, 76, 71, 0.08);
     }
 
     .nav {
-      height: 76px;
+      height: 74px;
       display: flex;
       align-items: center;
-      justify-content: space-between
+      justify-content: space-between;
     }
 
     .brand {
@@ -74,743 +85,1376 @@
       align-items: center;
       gap: 12px;
       font-weight: 800;
-      letter-spacing: -.02em
+      letter-spacing: -0.02em;
     }
 
-    .brand img {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      object-fit: cover
+    /* 로고에 인스타 스토리 링 적용 */
+    .brand-avatar-ring {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--insta-gradient);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
     }
 
-    .brand small {
-      display: block;
-      font-size: 10px;
-      letter-spacing: .18em;
+    .brand:hover .brand-avatar-ring {
+      transform: scale(1.06) rotate(6deg);
+    }
+
+    .brand-avatar-inner {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 50%;
+      padding: 1.5px;
+      overflow: hidden;
+    }
+
+    .brand-avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 17px;
+      color: var(--ink);
+    }
+
+    .verified-check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      background: var(--blue-badge);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: bold;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      letter-spacing: 0.12em;
       color: var(--forest);
-      margin-top: 2px
+      font-weight: 600;
     }
 
     .menu {
       display: flex;
-      gap: 26px;
-      font-size: 14px;
+      align-items: center;
+      gap: 28px;
+      font-size: 15px;
       font-weight: 700;
-      color: #455553
+      color: #455553;
+    }
+
+    .menu a {
+      transition: color 0.15s ease;
     }
 
     .menu a:hover {
-      color: var(--mint-strong)
+      color: var(--mint-strong);
     }
 
+    .menu-cta {
+      background: var(--forest);
+      color: #fff !important;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .menu-cta:hover {
+      background: #193834;
+      transform: translateY(-1px);
+    }
+
+    /* 2. 히어로 섹션 + 인스타 미니미 프로필 카드 */
     .hero {
-      padding: 34px 0 86px
+      padding: 30px 0 60px;
     }
 
-    .hero-frame {
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    /* 좌측 메인 히어로 배너 */
+    .hero-main-frame {
       position: relative;
-      min-height: 720px;
-      border-radius: 0 0 46px 46px;
+      min-height: 580px;
+      border-radius: 36px;
       overflow: hidden;
-      background: var(--cream)
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      box-shadow: 0 16px 36px rgba(36, 76, 71, 0.08);
     }
 
-    .hero-frame img {
+    .hero-main-frame img.bg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover
+      object-fit: cover;
     }
 
-    .hero-frame:after {
+    .hero-main-frame:after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(22, 47, 44, .78) 0%, rgba(22, 47, 44, .55) 34%, rgba(22, 47, 44, .08) 68%, transparent 100%)
+      background: linear-gradient(180deg, rgba(22, 47, 44, 0.15) 0%, rgba(22, 47, 44, 0.55) 50%, rgba(22, 47, 44, 0.88) 100%);
     }
 
     .hero-copy {
       position: relative;
       z-index: 2;
-      padding: 118px 8% 80px;
+      padding: 50px 44px;
       color: #fff;
-      max-width: 690px
-    }
-
-    .eyebrow,
-    .kicker {
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: .16em;
-      text-transform: uppercase
     }
 
     .eyebrow {
-      color: #d9eee9
-    }
-
-    .kicker {
-      color: var(--forest)
+      display: inline-block;
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #ccebe5;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 4px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      margin-bottom: 14px;
     }
 
     h1 {
-      font-size: 66px;
-      line-height: 1.08;
-      letter-spacing: -.055em;
-      margin: 14px 0 24px
-    }
-
-    h2 {
-      font-size: 44px;
-      line-height: 1.22;
-      letter-spacing: -.045em;
-      margin: 8px 0 16px
-    }
-
-    h3 {
-      letter-spacing: -.03em
+      font-size: 48px;
+      line-height: 1.18;
+      letter-spacing: -0.04em;
+      margin-bottom: 16px;
+      font-weight: 800;
     }
 
     .hero-copy p {
-      font-size: 19px;
-      max-width: 560px;
-      color: #edf7f5
+      font-size: 17px;
+      line-height: 1.6;
+      color: #e6f3f0;
+      max-width: 520px;
+      margin-bottom: 24px;
     }
 
-    .btns {
+    .hero-btns {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      margin-top: 30px
     }
 
     .btn {
-      padding: 14px 21px;
+      padding: 12px 22px;
       border-radius: 999px;
-      font-weight: 800;
+      font-weight: 700;
+      font-size: 14.5px;
       display: inline-flex;
       align-items: center;
-      justify-content: center
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
     }
 
     .btn-light {
       background: #fff;
-      color: var(--forest)
+      color: var(--forest);
+    }
+
+    .btn-light:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
     }
 
     .btn-ghost {
-      border: 1px solid rgba(255, 255, 255, .55);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       color: #fff;
-      background: rgba(255, 255, 255, .08)
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
     }
 
-    .btn-dark {
-      background: var(--forest);
-      color: #fff
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
     }
 
-    .btn-soft {
-      background: var(--sage);
-      color: var(--forest)
+    /* 우측 인스타그램 미니미 프로필 카드 */
+    .insta-mini-card {
+      background: #ffffff;
+      border-radius: 36px;
+      padding: 30px 26px;
+      border: 1px solid rgba(36, 76, 71, 0.08);
+      box-shadow: 0 16px 36px rgba(36, 76, 71, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
+    .mini-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .mini-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mini-avatar-ring {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: var(--insta-gradient);
+      padding: 2.5px;
+      flex-shrink: 0;
+    }
+
+    .mini-avatar-inner {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 50%;
+      padding: 1.5px;
+      overflow: hidden;
+    }
+
+    .mini-avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .mini-username {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .mini-user-badge {
+      font-size: 12px;
+      color: var(--sub);
+      font-weight: 500;
+    }
+
+    .mini-stats {
+      display: flex;
+      justify-content: space-around;
+      background: #f8faf9;
+      border-radius: 18px;
+      padding: 12px 6px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .mini-stat-item b {
+      display: block;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--forest);
+    }
+
+    .mini-stat-item span {
+      font-size: 11.5px;
+      color: var(--sub);
+    }
+
+    .mini-bio {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .mini-bio p {
+      margin-bottom: 4px;
+    }
+
+    .mini-bio-tags {
+      color: #00376b;
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .mini-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-insta-kakao {
+      background: #fee500;
+      color: #191919;
+      font-weight: 800;
+      padding: 12px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-insta-kakao:hover {
+      background: #f8df00;
+    }
+
+    .mini-sub-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-sub-link {
+      background: #f0f3f2;
+      color: var(--forest);
+      font-weight: 700;
+      padding: 9px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12.5px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-sub-link:hover {
+      background: #e2e8e6;
+    }
+
+    /* 3. 스토리 하이라이트 원형 메뉴 바 */
+    .highlights-section {
+      padding: 10px 0 45px;
+    }
+
+    .highlights-bar {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding: 8px 4px;
+      scrollbar-width: none;
+      justify-content: center;
+    }
+
+    .highlights-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hl-circle-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      transition: transform 0.2s ease;
+    }
+
+    .hl-circle-item:hover {
+      transform: translateY(-4px);
+    }
+
+    .hl-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--insta-gradient);
+      padding: 2.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(220, 39, 67, 0.15);
+    }
+
+    .hl-inner {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 50%;
+      padding: 2px;
+      overflow: hidden;
+    }
+
+    .hl-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .hl-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--forest);
+    }
+
+    /* 공통 섹션 스타일 */
     section {
-      padding: 110px 0
+      padding: 95px 0;
+    }
+
+    .kicker {
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--mint-strong);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 38px;
+      line-height: 1.25;
+      letter-spacing: -0.04em;
+      margin-bottom: 12px;
+      color: var(--forest);
     }
 
     .lead {
-      font-size: 18px;
+      font-size: 17px;
       color: var(--sub);
-      max-width: 780px
+      max-width: 680px;
     }
 
     .section-head {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 30px;
-      margin-bottom: 40px
-    }
-
-    .section-head .lead {
-      max-width: 520px
+      gap: 24px;
+      margin-bottom: 38px;
     }
 
     .bg-white {
-      background: #fff
-    }
-
-    .bg-cream {
-      background: var(--cream)
+      background: #ffffff;
     }
 
     .bg-sage {
-      background: #eaf2ef
+      background: var(--sage-light);
+    }
+
+    .bg-cream {
+      background: var(--cream);
     }
 
     .bg-rose {
-      background: #f6eceb
+      background: var(--rose-light);
     }
 
+    /* 4. ABOUT: 실제 수업 & 작품 에디토리얼 */
     .editorial-grid {
       display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 18px
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
     }
 
     .editorial-main {
-      border-radius: 32px;
+      border-radius: 30px;
       overflow: hidden;
-      min-height: 640px;
-      position: relative
+      min-height: 520px;
+      position: relative;
     }
 
     .editorial-main img {
       width: 100%;
       height: 100%;
-      object-fit: cover
+      object-fit: cover;
     }
 
     .editorial-main .overlay {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 90px 34px 32px;
-      background: linear-gradient(transparent, rgba(0, 0, 0, .62));
-      color: white
+      inset: auto 0 0 0;
+      padding: 80px 32px 30px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+      color: #fff;
     }
 
     .editorial-main .overlay b {
-      font-size: 27px
+      font-size: 24px;
     }
 
     .side-stack {
       display: grid;
       grid-template-rows: 1fr 1fr;
-      gap: 18px
+      gap: 20px;
     }
 
     .side-card {
-      border-radius: 30px;
+      border-radius: 26px;
       overflow: hidden;
       position: relative;
-      min-height: 310px
+      min-height: 250px;
     }
 
     .side-card img {
       width: 100%;
       height: 100%;
-      object-fit: cover
+      object-fit: cover;
     }
 
     .side-card .overlay {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 70px 24px 22px;
-      background: linear-gradient(transparent, rgba(0, 0, 0, .58));
-      color: #fff
+      inset: auto 0 0 0;
+      padding: 50px 24px 20px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
     }
 
-    .side-card b {
-      font-size: 22px
-    }
-
+    /* 5. WHY: AI 시대 5가지 힘 */
     .values {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 14px;
-      margin-top: 38px
+      gap: 16px;
+      margin-top: 36px;
     }
 
-    .value {
-      background: rgba(255, 255, 255, .74);
-      border: 1px solid rgba(36, 76, 71, .09);
-      border-radius: 24px;
-      padding: 27px 22px;
-      min-height: 170px
+    .value-card {
+      background: #ffffff;
+      border: 1px solid rgba(36, 76, 71, 0.08);
+      border-radius: 22px;
+      padding: 26px 20px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .value .num {
+    .value-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(36, 76, 71, 0.07);
+    }
+
+    .value-card .num {
       font-size: 12px;
-      letter-spacing: .15em;
+      letter-spacing: 0.15em;
       color: var(--mint-strong);
-      font-weight: 800
+      font-weight: 800;
     }
 
-    .value b {
+    .value-card b {
       display: block;
-      font-size: 19px;
-      margin: 10px 0 7px
+      font-size: 18px;
+      margin: 8px 0 6px;
+      color: var(--forest);
     }
 
-    .value span {
-      font-size: 14px;
-      color: var(--sub)
+    .value-card span {
+      font-size: 13.5px;
+      color: var(--sub);
+      line-height: 1.5;
     }
 
+    /* 6. PROGRAM: 연령별 프로그램 */
     .programs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px
+      gap: 24px;
     }
 
-    .program {
-      background: #fff;
-      border-radius: 28px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(36, 76, 71, .06)
-    }
-
-    .program img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover
-    }
-
-    .program .copy {
-      padding: 28px
-    }
-
-    .program .age {
-      font-size: 12px;
-      letter-spacing: .13em;
-      color: var(--mint-strong);
-      font-weight: 800
-    }
-
-    .program h3 {
-      font-size: 23px;
-      margin: 7px 0 9px
-    }
-
-    .program p {
-      margin: 0;
-      color: var(--sub)
-    }
-
-    .philosophy {
-      display: grid;
-      grid-template-columns: .9fr 1.1fr;
-      gap: 58px;
-      align-items: center
-    }
-
-    .philosophy img {
-      width: 100%;
-      height: 600px;
-      object-fit: cover;
-      border-radius: 34px
-    }
-
-    .big-copy {
-      font-size: 40px;
-      line-height: 1.38;
-      font-weight: 800;
-      letter-spacing: -.045em;
-      color: var(--forest)
-    }
-
-    .big-copy em {
-      font-style: normal;
-      background: linear-gradient(transparent 67%, #cfeae4 0)
-    }
-
-    .philosophy p {
-      font-size: 18px;
-      color: var(--sub)
-    }
-
-    .mosaic {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      grid-auto-rows: 120px;
-      gap: 16px
-    }
-
-    .tile {
-      position: relative;
-      overflow: hidden;
+    .program-card {
+      background: #ffffff;
       border-radius: 26px;
-      background: #ddd
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(36, 76, 71, 0.05);
+      border: 1px solid rgba(36, 76, 71, 0.06);
+      transition: transform 0.2s ease;
     }
 
-    .tile img {
+    .program-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .program-card img {
+      width: 100%;
+      height: 270px;
+      object-fit: cover;
+    }
+
+    .program-copy {
+      padding: 26px;
+    }
+
+    .program-age {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      color: var(--mint-strong);
+      font-weight: 800;
+    }
+
+    .program-copy h3 {
+      font-size: 21px;
+      margin: 6px 0 8px;
+      color: var(--forest);
+    }
+
+    .program-copy p {
+      color: var(--sub);
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    /* 7. INSTAGRAM FEED GALLERY (인스타 피드 갤러리) */
+    .insta-gallery-container {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 36px;
+      box-shadow: 0 12px 36px rgba(36, 76, 71, 0.06);
+      border: 1px solid rgba(36, 76, 71, 0.08);
+    }
+
+    .gallery-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+
+    .gallery-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .gallery-user-info img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .gallery-user-text b {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .gallery-user-text span {
+      font-size: 12.5px;
+      color: var(--sub);
+    }
+
+    .gallery-tabs {
+      display: flex;
+      gap: 12px;
+    }
+
+    .gallery-tab-btn {
+      background: #f4efe5;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--forest);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .gallery-tab-btn.active,
+    .gallery-tab-btn:hover {
+      background: var(--forest);
+      color: #fff;
+    }
+
+    /* 3열 정방형 인스타 피드 그리드 */
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .insta-post-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #eaeaea;
+    }
+
+    .insta-post-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform .35s ease
+      transition: transform 0.3s ease;
     }
 
-    .tile:hover img {
-      transform: scale(1.025)
+    .insta-post-item:hover img {
+      transform: scale(1.05);
     }
 
-    .t1 {
-      grid-column: span 7;
-      grid-row: span 4
-    }
-
-    .t2 {
-      grid-column: span 5;
-      grid-row: span 2
-    }
-
-    .t3 {
-      grid-column: span 5;
-      grid-row: span 2
-    }
-
-    .t4 {
-      grid-column: span 4;
-      grid-row: span 3
-    }
-
-    .t5 {
-      grid-column: span 4;
-      grid-row: span 3
-    }
-
-    .t6 {
-      grid-column: span 4;
-      grid-row: span 3
-    }
-
-    .tile .label {
+    /* 호버 시 하트/댓글 오버레이 */
+    .insta-overlay {
       position: absolute;
-      left: 18px;
-      bottom: 16px;
-      background: rgba(255, 255, 255, .9);
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--forest)
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.2s ease;
     }
 
-    .director {
+    .insta-post-item:hover .insta-overlay {
+      opacity: 1;
+    }
+
+    .overlay-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 8. DIRECTOR & PHILOSOPHY */
+    .director-section {
       display: grid;
-      grid-template-columns: .82fr 1.18fr;
-      gap: 62px;
-      align-items: center
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 54px;
+      align-items: center;
     }
 
     .director-photo {
-      position: relative
+      position: relative;
     }
 
     .director-photo img {
       width: 100%;
-      height: 630px;
+      height: 580px;
       object-fit: cover;
       object-position: center top;
-      border-radius: 38px
+      border-radius: 34px;
     }
 
     .director-badge {
       position: absolute;
-      right: -16px;
-      bottom: 28px;
+      right: -14px;
+      bottom: 24px;
       background: var(--forest);
       color: #fff;
-      border-radius: 22px;
-      padding: 18px 20px;
+      border-radius: 20px;
+      padding: 16px 20px;
       font-weight: 800;
-      box-shadow: 0 18px 38px rgba(36, 76, 71, .2)
+      font-size: 14.5px;
+      box-shadow: 0 16px 32px rgba(36, 76, 71, 0.25);
     }
 
-    .career {
+    .career-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 28px
+      gap: 10px;
+      margin: 24px 0;
     }
 
-    .career div {
-      background: #fff;
-      border: 1px solid rgba(36, 76, 71, .08);
-      border-radius: 18px;
-      padding: 18px 19px;
-      font-weight: 700
+    .career-grid div {
+      background: #ffffff;
+      border: 1px solid rgba(36, 76, 71, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
     }
 
-    .quote {
-      margin-top: 28px;
-      padding: 24px 26px;
+    .quote-box {
+      padding: 22px 24px;
       border-left: 4px solid var(--mint-strong);
-      background: #fff;
-      border-radius: 0 22px 22px 0;
-      font-size: 20px;
+      background: #ffffff;
+      border-radius: 0 18px 18px 0;
+      font-size: 18px;
       font-weight: 800;
-      color: var(--forest)
+      color: var(--forest);
     }
 
-    .connect {
+    /* 9. CONNECT & FOOTER */
+    .connect-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px
+      gap: 16px;
     }
 
-    .connect a {
-      background: #fff;
-      border-radius: 22px;
-      padding: 24px;
+    .connect-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 22px;
       border: 1px solid var(--line);
-      font-weight: 800
+      font-weight: 800;
+      display: block;
+      transition: all 0.2s ease;
     }
 
-    .connect small {
+    .connect-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(36, 76, 71, 0.06);
+    }
+
+    .connect-card small {
       display: block;
       color: var(--sub);
-      font-weight: 600;
-      margin-top: 5px
+      font-weight: 500;
+      margin-top: 4px;
+      font-size: 13px;
     }
 
     .cta {
       background: var(--forest);
       color: #fff;
       text-align: center;
-      padding: 92px 20px
+      padding: 85px 20px;
+      border-radius: 36px;
+      margin-bottom: 40px;
     }
 
     .cta h2 {
-      font-size: 44px;
-      margin: 0 0 13px
+      color: #fff;
+      font-size: 40px;
+      margin-bottom: 12px;
     }
 
     .cta p {
       color: #d7e6e2;
-      font-size: 18px
+      font-size: 17px;
+      margin-bottom: 24px;
     }
 
     footer {
-      padding: 38px 0;
+      padding: 34px 0 44px;
       color: #7a8582;
-      font-size: 13px;
-      background: #fff
+      font-size: 13.5px;
+      border-top: 1px solid var(--line);
     }
 
     .foot {
       display: flex;
       justify-content: space-between;
       gap: 20px;
-      flex-wrap: wrap
+      flex-wrap: wrap;
     }
 
-    @media(max-width:940px) {
-      .menu {
-        display: none
-      }
+    /* 10. 인스타그램 포스트 상세 모달 */
+    .insta-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
 
-      .hero-frame {
-        min-height: 620px
-      }
+    .insta-modal.active {
+      display: flex;
+      opacity: 1;
+    }
 
-      .hero-copy {
-        padding: 92px 7% 68px
-      }
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+      animation: modalUp 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
 
-      h1 {
-        font-size: 50px
-      }
+    @keyframes modalUp {
+      from { transform: translateY(20px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
 
+    .modal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-user img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .modal-user-name {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .modal-location {
+      font-size: 11.5px;
+      color: var(--sub);
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--ink);
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-img-container {
+      position: relative;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 380px;
+      overflow: hidden;
+    }
+
+    .modal-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      max-height: 380px;
+    }
+
+    /* 더블탭 하트 */
+    .big-heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 64px;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    }
+
+    .big-heart.animate {
+      transform: translate(-50%, -50%) scale(1.2);
+      opacity: 1;
+    }
+
+    .modal-content {
+      padding: 16px 18px 20px;
+      overflow-y: auto;
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .heart-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      transition: transform 0.15s ease;
+    }
+
+    .heart-btn.liked {
+      color: var(--heart-red);
+    }
+
+    .modal-likes {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .modal-caption-text {
+      font-size: 14px;
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+
+    .modal-hashtags {
+      color: #00376b;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .modal-cta-box {
+      background: var(--sage-light);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-cta-text {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--forest);
+    }
+
+    .modal-cta-btn {
+      background: var(--forest);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* 플로팅 인스타 상담 위젯 (우측 하단) */
+    .floating-insta-widget {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      padding: 8px 16px 8px 10px;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(36, 76, 71, 0.16);
+      border: 1px solid rgba(36, 76, 71, 0.08);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .floating-insta-widget:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(36, 76, 71, 0.22);
+    }
+
+    .widget-ring {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--insta-gradient);
+      padding: 2px;
+    }
+
+    .widget-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .widget-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .widget-text b {
+      font-size: 13px;
+      color: var(--forest);
+      line-height: 1.2;
+    }
+
+    .widget-text span {
+      font-size: 11px;
+      color: #2e7d73;
+      font-weight: 700;
+    }
+
+    /* 미디어 쿼리 */
+    @media(max-width: 980px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+      }
+      .hero-main-frame {
+        min-height: 480px;
+      }
       .editorial-grid,
-      .philosophy,
-      .director {
-        grid-template-columns: 1fr
+      .director-section {
+        grid-template-columns: 1fr;
       }
-
       .side-stack {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: none
+        grid-template-rows: none;
       }
-
       .values {
-        grid-template-columns: repeat(2, 1fr)
+        grid-template-columns: repeat(2, 1fr);
       }
-
       .programs {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
       }
-
-      .program img {
-        height: 360px
+      .insta-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
-
-      .mosaic {
+      .connect-grid {
         grid-template-columns: 1fr 1fr;
-        grid-auto-rows: 280px
       }
-
-      .t1,
-      .t2,
-      .t3,
-      .t4,
-      .t5,
-      .t6 {
-        grid-column: span 1;
-        grid-row: span 1
+      .menu {
+        display: none;
       }
-
-      .t1 {
-        grid-column: 1/-1
-      }
-
-      .career {
-        grid-template-columns: 1fr
-      }
-
-      .connect {
-        grid-template-columns: 1fr 1fr
-      }
-
-      .director-badge {
-        right: 18px
+      .director-photo img {
+        height: 480px;
       }
     }
 
-    @media(max-width:560px) {
+    @media(max-width: 600px) {
       .wrap {
-        width: min(100% - 28px, 1180px)
+        width: min(calc(100% - 28px), 1180px);
       }
-
-      .nav {
-        height: 64px
-      }
-
-      .hero {
-        padding-top: 18px
-      }
-
-      .hero-frame {
-        min-height: 560px;
-        border-radius: 0 0 28px 28px
-      }
-
-      .hero-frame:after {
-        background: linear-gradient(180deg, rgba(22, 47, 44, .7), rgba(22, 47, 44, .38) 70%, rgba(22, 47, 44, .1))
-      }
-
-      .hero-copy {
-        padding: 72px 24px 60px
-      }
-
       h1 {
-        font-size: 40px
+        font-size: 36px;
       }
-
       h2 {
-        font-size: 32px
+        font-size: 28px;
       }
-
-      .hero-copy p,
-      .lead,
-      .philosophy p {
-        font-size: 16px
+      .hero-copy {
+        padding: 34px 22px;
       }
-
-      section {
-        padding: 76px 0
-      }
-
-      .section-head {
-        display: block
-      }
-
-      .section-head .lead {
-        margin-top: 12px
-      }
-
-      .editorial-grid {
-        grid-template-columns: 1fr
-      }
-
-      .editorial-main {
-        min-height: 430px
-      }
-
-      .side-stack {
-        grid-template-columns: 1fr
-      }
-
-      .side-card {
-        min-height: 290px
-      }
-
       .values,
-      .connect,
-      .mosaic {
-        grid-template-columns: 1fr
+      .connect-grid {
+        grid-template-columns: 1fr;
       }
-
-      .mosaic {
-        grid-auto-rows: 290px
+      .insta-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
       }
-
-      .t1 {
-        grid-column: auto
+      .highlights-bar {
+        justify-content: flex-start;
       }
-
-      .program img {
-        height: 260px
-      }
-
-      .philosophy img {
-        height: 420px
-      }
-
-      .big-copy {
-        font-size: 30px
-      }
-
-      .director-photo img {
-        height: 500px
-      }
-
-      .cta h2 {
-        font-size: 34px
+      .insta-gallery-container {
+        padding: 20px 14px;
       }
     }
   </style>
 </head>
 
 <body>
+
+  <!-- 1. 상단 네비게이션 -->
   <header class="top">
     <div class="wrap nav">
       <a class="brand" href="#top">
-        <img src="logo.jpg" alt="이화미술공작소 로고">
-        <span>이화미술공작소<small>EWHA ART · KIDS ATELIER</small></span>
+        <div class="brand-avatar-ring">
+          <div class="brand-avatar-inner">
+            <img src="logo.jpg" alt="이화미술공작소 로고">
+          </div>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">
+            이화미술공작소
+            <span class="verified-check">✓</span>
+          </div>
+          <span class="brand-sub">@ewha_art_min · KIDS ATELIER</span>
+        </div>
       </a>
       <nav class="menu">
-        <a href="#about">이화미술</a><a href="#program">프로그램</a><a href="#gallery">수업·작품</a><a href="#director">원장소개</a><a
-          href="#contact">상담</a>
+        <a href="#about">이화미술</a>
+        <a href="#values">5대 핵심역량</a>
+        <a href="#program">수업 프로그램</a>
+        <a href="#gallery">인스타 갤러리</a>
+        <a href="#director">원장소개</a>
+        <a href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" class="menu-cta">
+          💬 1:1 카톡 상담
+        </a>
       </nav>
     </div>
   </header>
 
   <main id="top">
+
+    <!-- 2. 히어로 섹션 + 우측 인스타 미니미 프로필 카드 -->
     <section class="hero">
       <div class="wrap">
-        <div class="hero-frame">
-          <img src="space_3.jpg" alt="이화미술공작소 내부">
-          <div class="hero-copy">
-            <div class="eyebrow">EWHA ART · SINCE 2011</div>
-            <h1>아이의 생각이<br>작품이 되는 곳.</h1>
-            <p>관찰하고 질문하고 표현하는 힘. 이화미술공작소는 결과보다 과정, 따라 그리기보다 자기 생각을 꺼내는 미술을 가르칩니다.</p>
-            <div class="btns">
-              <a class="btn btn-light" href="#program">수업 프로그램</a>
-              <a class="btn btn-ghost" href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" rel="noopener">1:1
-                상담하기</a>
+        <div class="hero-container">
+
+          <!-- 좌측 메인 히어로 배너 -->
+          <div class="hero-main-frame">
+            <img src="space_3.jpg" alt="이화미술공작소 내부" class="bg">
+            <div class="hero-copy">
+              <div class="eyebrow">EWHA ART · SINCE 2011</div>
+              <h1>아이의 생각이<br>작품이 되는 곳.</h1>
+              <p>관찰하고 질문하고 표현하는 힘. 이화미술공작소는 결과보다 과정, 따라 그리기보다 자기 생각을 꺼내는 미술을 가르칩니다.</p>
+              <div class="hero-btns">
+                <a class="btn btn-light" href="#program">수업 프로그램 보기</a>
+                <a class="btn btn-ghost" href="#gallery">작품 둘러보기</a>
+              </div>
             </div>
           </div>
+
+          <!-- 우측 인스타그램 미니미 프로필 카드 위젯 -->
+          <aside class="insta-mini-card">
+            <div>
+              <div class="mini-card-top">
+                <div class="mini-user-info">
+                  <div class="mini-avatar-ring">
+                    <div class="mini-avatar-inner">
+                      <img src="logo.jpg" alt="이화미술공작소">
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mini-username">
+                      ewha_art_min
+                      <span class="verified-check">✓</span>
+                    </div>
+                    <div class="mini-user-badge">이화미술공작소 공식</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 통계 스탯 -->
+              <div class="mini-stats">
+                <div class="mini-stat-item">
+                  <b>18</b>
+                  <span>게시물</span>
+                </div>
+                <div class="mini-stat-item">
+                  <b>16년</b>
+                  <span>교육경력</span>
+                </div>
+                <div class="mini-stat-item">
+                  <b>2011</b>
+                  <span>설립연도</span>
+                </div>
+              </div>
+
+              <!-- 바이오 소개글 -->
+              <div class="mini-bio">
+                <p>🎨 <strong>문래동 아동·초등·중등 전문 미술 아틀리에</strong></p>
+                <p>👩‍🏫 이화여대 미술전공 · 국가공인 중등2급 정교사 직강</p>
+                <p>💡 "정답을 외우는 기술 대신, 스스로 표현하는 힘"</p>
+                <p>📍 서울 영등포구 문래로 92 대소빌딩 4층</p>
+                <div class="mini-bio-tags">#문래동미술 #초등미술 #독서융합 #창의조형</div>
+              </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="mini-actions">
+              <a href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" class="btn-insta-kakao">
+                카카오톡 1:1 맞춤 상담하기
+              </a>
+              <div class="mini-sub-btns">
+                <a href="https://blog.naver.com/sodamc93" target="_blank" class="btn-sub-link">
+                  네이버 블로그
+                </a>
+                <a href="https://www.instagram.com/ewha_art_min/" target="_blank" class="btn-sub-link">
+                  인스타그램 방문
+                </a>
+              </div>
+            </div>
+          </aside>
+
         </div>
       </div>
     </section>
 
+    <!-- 3. 인스타 스토리 하이라이트 원형 메뉴 바 -->
+    <div class="highlights-section">
+      <div class="wrap">
+        <div class="highlights-bar">
+          <button class="hl-circle-item" onclick="scrollToSection('program')">
+            <div class="hl-ring">
+              <div class="hl-inner">
+                <img src="poster_elementary_2.png" alt="수업안내">
+              </div>
+            </div>
+            <span class="hl-label">🎨 수업안내</span>
+          </button>
+
+          <button class="hl-circle-item" onclick="scrollToSection('gallery')">
+            <div class="hl-ring">
+              <div class="hl-inner">
+                <img src="climbing_art.jpg" alt="작품갤러리">
+              </div>
+            </div>
+            <span class="hl-label">🖼️ 작품갤러리</span>
+          </button>
+
+          <button class="hl-circle-item" onclick="scrollToSection('director')">
+            <div class="hl-ring">
+              <div class="hl-inner">
+                <img src="director.jpg" alt="원장소개">
+              </div>
+            </div>
+            <span class="hl-label">👩‍🏫 원장소개</span>
+          </button>
+
+          <button class="hl-circle-item" onclick="scrollToSection('values')">
+            <div class="hl-ring">
+              <div class="hl-inner">
+                <img src="poster_ai.jpg" alt="교육철학">
+              </div>
+            </div>
+            <span class="hl-label">💡 교육철학</span>
+          </button>
+
+          <button class="hl-circle-item" onclick="filterGallery('space')">
+            <div class="hl-ring">
+              <div class="hl-inner">
+                <img src="space_3.jpg" alt="공작소공간">
+              </div>
+            </div>
+            <span class="hl-label">🏫 공간소개</span>
+          </button>
+
+          <button class="hl-circle-item" onclick="filterGallery('reading')">
+            <div class="hl-ring">
+              <div class="hl-inner">
+                <img src="poster_reading.jpg" alt="독서융합">
+              </div>
+            </div>
+            <span class="hl-label">📖 독서융합</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ABOUT: 실제 수업과 공간 -->
     <section id="about" class="bg-white">
       <div class="wrap">
         <div class="section-head">
@@ -823,35 +1467,62 @@
         <div class="editorial-grid">
           <div class="editorial-main">
             <img src="class_group.jpg" alt="이화미술공작소 그룹 수업">
-            <div class="overlay"><b>함께 배우지만, 표현은 각자 다르게</b><br>아이마다 다른 관찰과 생각을 존중합니다.</div>
+            <div class="overlay">
+              <b>함께 배우지만, 표현은 각자 다르게</b><br>
+              아이마다 다른 관찰과 생각을 존중합니다.
+            </div>
           </div>
           <div class="side-stack">
-            <div class="side-card"><img src="young_class_1.jpg" alt="저학년 수업">
-              <div class="overlay"><b>손으로 배우는 미술</b></div>
+            <div class="side-card">
+              <img src="young_class_1.jpg" alt="저학년 수업">
+              <div class="overlay">손으로 배우는 조형 미술</div>
             </div>
-            <div class="side-card"><img src="climbing_art.jpg" alt="입체 작품">
-              <div class="overlay"><b>평면에서 입체로 확장</b></div>
+            <div class="side-card">
+              <img src="climbing_art.jpg" alt="입체 작품">
+              <div class="overlay">평면에서 입체로 확장되는 사고</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="bg-sage">
+    <!-- 5. WHY: AI 시대 5가지 힘 -->
+    <section id="values" class="bg-sage">
       <div class="wrap">
         <div class="kicker">WHY EWHA ART</div>
         <h2>AI 시대에 더 중요해지는<br>다섯 가지 힘</h2>
         <p class="lead">빠르게 정답을 얻는 시대일수록 자기 생각을 오래 들여다보고, 질문하고, 수정하고, 끝까지 표현해 보는 경험이 중요합니다.</p>
         <div class="values">
-          <div class="value"><span class="num">01</span><b>질문하는 힘</b><span>왜 그런지 스스로 묻고 생각을 확장합니다.</span></div>
-          <div class="value"><span class="num">02</span><b>관찰하는 힘</b><span>형태와 비례, 세부 특징을 천천히 발견합니다.</span></div>
-          <div class="value"><span class="num">03</span><b>표현하는 힘</b><span>생각과 감정을 자기만의 이미지로 바꿉니다.</span></div>
-          <div class="value"><span class="num">04</span><b>기초 조형력</b><span>드로잉·소묘·디자인으로 기본기를 쌓습니다.</span></div>
-          <div class="value"><span class="num">05</span><b>끝까지 해내는 힘</b><span>시도하고 수정하며 완성하는 경험을 합니다.</span></div>
+          <div class="value-card">
+            <span class="num">01</span>
+            <b>질문하는 힘</b>
+            <span>왜 그런지 스스로 묻고 생각을 확장합니다.</span>
+          </div>
+          <div class="value-card">
+            <span class="num">02</span>
+            <b>관찰하는 힘</b>
+            <span>형태와 비례, 세부 특징을 천천히 발견합니다.</span>
+          </div>
+          <div class="value-card">
+            <span class="num">03</span>
+            <b>표현하는 힘</b>
+            <span>생각과 감정을 자기만의 이미지로 바꿉니다.</span>
+          </div>
+          <div class="value-card">
+            <span class="num">04</span>
+            <b>기초 조형력</b>
+            <span>드로잉·소묘·디자인으로 기본기를 쌓습니다.</span>
+          </div>
+          <div class="value-card">
+            <span class="num">05</span>
+            <b>끝까지 해내는 힘</b>
+            <span>시도하고 수정하며 완성하는 경험을 합니다.</span>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- 6. PROGRAM: 연령별 프로그램 -->
     <section id="program" class="bg-white">
       <div class="wrap">
         <div class="section-head">
@@ -862,127 +1533,445 @@
           <p class="lead">유아의 감각 경험부터 초등의 독서·표현, 고학년의 관찰·소묘·기초디자인까지 자연스럽게 이어집니다.</p>
         </div>
         <div class="programs">
-          <article class="program"><img src="poster_elementary_2.png" alt="예비초등 프로그램">
-            <div class="copy">
-              <div class="age">6–7 YEARS</div>
-              <h3>예비초등</h3>
-              <p>관찰, 이야기 만들기, 그림일기 준비, 다양한 재료 경험으로 표현의 기초를 만듭니다.</p>
+          <article class="program-card">
+            <img src="poster_elementary_2.png" alt="예비초등 프로그램">
+            <div class="program-copy">
+              <div class="program-age">6–7 YEARS</div>
+              <h3>예비초등 클래스</h3>
+              <p>관찰, 이야기 만들기, 그림일기 준비, 다양한 재료 경험으로 표현의 기초를 탄탄히 만듭니다.</p>
             </div>
           </article>
-          <article class="program"><img src="poster_reading.jpg" alt="독서융합미술">
-            <div class="copy">
-              <div class="age">LOWER ELEMENTARY</div>
-              <h3>초등 저학년</h3>
-              <p>독서융합미술, 그림일기, 동작드로잉, 오브제 활동으로 생각을 그림과 말로 연결합니다.</p>
+          <article class="program-card">
+            <img src="poster_reading.jpg" alt="초등 저학년 프로그램">
+            <div class="program-copy">
+              <div class="program-age">LOWER ELEMENTARY</div>
+              <h3>초등 저학년 융합</h3>
+              <p>독서융합미술, 그림일기, 동작드로잉, 오브제 활동으로 생각을 그림과 말로 입체적으로 연결합니다.</p>
             </div>
           </article>
-          <article class="program"><img src="portrait_drawing.jpg" alt="인물드로잉">
-            <div class="copy">
-              <div class="age">UPPER ELEMENTARY · MIDDLE</div>
-              <h3>고학년 · 중등</h3>
-              <p>인물·동작드로잉, 소묘, 기초디자인과 다양한 재료 표현으로 깊이 있는 기본기를 만듭니다.</p>
+          <article class="program-card">
+            <img src="portrait_drawing.jpg" alt="고학년 중등 프로그램">
+            <div class="program-copy">
+              <div class="program-age">UPPER ELEMENTARY · MIDDLE</div>
+              <h3>고학년 · 중등 정규</h3>
+              <p>인물·동작드로잉, 소묘, 기초디자인과 다양한 재료 표현으로 깊이 있는 기본기와 개성을 기릅니다.</p>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="bg-rose">
-      <div class="wrap philosophy">
-        <img src="poster_ai.jpg" alt="AI 시대 미술교육">
-        <div>
-          <div class="kicker">EDUCATION PHILOSOPHY</div>
-          <p class="big-copy">잘 그리는 아이보다<br><em>생각하고 소통할 줄 아는 아이</em>로.</p>
-          <p>결과물이 예쁘게 나오는 것보다, 아이가 무엇을 보고 무엇을 느꼈는지, 왜 그렇게 표현했는지를 더 중요하게 생각합니다.</p>
-        </div>
-      </div>
-    </section>
-
+    <!-- 7. INSTAGRAM FEED GALLERY (인스타 피드 감성 갤러리) -->
     <section id="gallery" class="bg-cream">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <div class="kicker">CLASS & ARTWORKS</div>
-            <h2>수업과 작품을<br>한눈에 보는 갤러리</h2>
+            <div class="kicker">INSTAGRAM FEED ARCHIVE</div>
+            <h2>수업과 작품을 담은<br>인스타 갤러리</h2>
           </div>
-          <p class="lead">드로잉, 입체, 혼합재료, 소묘, 인물 표현까지 이화미술공작소의 실제 수업 결과를 보여드립니다.</p>
+          <p class="lead">사진을 클릭하면 인스타그램 스타일의 상세 게시글과 교육 이야기를 보실 수 있습니다.</p>
         </div>
-        <div class="mosaic">
-          <div class="tile t1"><img src="climbing_art.jpg" alt="입체 프로젝트"><span class="label">동작드로잉 × 입체</span></div>
-          <div class="tile t2"><img src="mozart_art.jpg" alt="음악가 융합미술"><span class="label">음악 × 인물</span></div>
-          <div class="tile t3"><img src="portrait_drawing.jpg" alt="인물드로잉"><span class="label">인물 드로잉</span></div>
-          <div class="tile t4"><img src="guitar_shell.jpg" alt="관찰과 채색"><span class="label">관찰 × 채색</span></div>
-          <div class="tile t5"><img src="dinosaur_art.jpg" alt="공룡 소묘"><span class="label">소묘 × 구조</span></div>
-          <div class="tile t6"><img src="young_class_2.jpg" alt="혼합재료 수업"><span class="label">혼합재료</span></div>
+
+        <!-- 갤러리 컨테이너 -->
+        <div class="insta-gallery-container">
+          <div class="gallery-header-bar">
+            <div class="gallery-user-info">
+              <img src="logo.jpg" alt="이화미술공작소">
+              <div class="gallery-user-text">
+                <b>ewha_art_min <span class="verified-check">✓</span></b>
+                <span>이화미술공작소 작품 및 수업 기록</span>
+              </div>
+            </div>
+            <div class="gallery-tabs">
+              <button class="gallery-tab-btn active" onclick="filterGallery('all', this)">전체</button>
+              <button class="gallery-tab-btn" onclick="filterGallery('art', this)">작품</button>
+              <button class="gallery-tab-btn" onclick="filterGallery('program', this)">수업</button>
+              <button class="gallery-tab-btn" onclick="filterGallery('space', this)">공간</button>
+            </div>
+          </div>
+
+          <!-- 3열 인스타 피드 그리드 -->
+          <div class="insta-grid" id="insta-grid">
+            <!-- 그리드 아이템 1 -->
+            <div class="insta-post-item" onclick="openModal(0)" data-category="art">
+              <img src="climbing_art.jpg" alt="동작드로잉과 입체" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 184</div>
+                <div class="overlay-stat">💬 12</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 2 -->
+            <div class="insta-post-item" onclick="openModal(1)" data-category="space">
+              <img src="space_3.jpg" alt="학원 공간" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 210</div>
+                <div class="overlay-stat">💬 18</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 3 -->
+            <div class="insta-post-item" onclick="openModal(2)" data-category="program">
+              <img src="class_group.jpg" alt="그룹 수업" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 195</div>
+                <div class="overlay-stat">💬 14</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 4 -->
+            <div class="insta-post-item" onclick="openModal(3)" data-category="art">
+              <img src="mozart_art.jpg" alt="음악가 모차르트 융합" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 232</div>
+                <div class="overlay-stat">💬 25</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 5 -->
+            <div class="insta-post-item" onclick="openModal(4)" data-category="program">
+              <img src="poster_elementary_2.png" alt="예비초등" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 167</div>
+                <div class="overlay-stat">💬 9</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 6 -->
+            <div class="insta-post-item" onclick="openModal(5)" data-category="program">
+              <img src="young_class_1.jpg" alt="저학년 수업" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 178</div>
+                <div class="overlay-stat">💬 11</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 7 -->
+            <div class="insta-post-item" onclick="openModal(6)" data-category="art">
+              <img src="portrait_drawing.jpg" alt="인물 드로잉" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 245</div>
+                <div class="overlay-stat">💬 31</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 8 -->
+            <div class="insta-post-item" onclick="openModal(7)" data-category="art">
+              <img src="guitar_shell.jpg" alt="관찰과 채색" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 189</div>
+                <div class="overlay-stat">💬 16</div>
+              </div>
+            </div>
+
+            <!-- 그리드 아이템 9 -->
+            <div class="insta-post-item" onclick="openModal(8)" data-category="art">
+              <img src="dinosaur_art.jpg" alt="공룡 소묘" loading="lazy">
+              <div class="insta-overlay">
+                <div class="overlay-stat">❤️ 198</div>
+                <div class="overlay-stat">💬 15</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- 8. DIRECTOR: 원장 소개 및 약력 -->
     <section id="director" class="bg-white">
-      <div class="wrap director">
+      <div class="wrap director-section">
         <div class="director-photo">
           <img src="director.jpg" alt="이화미술공작소 정소담 원장">
-          <div class="director-badge">16년 미술교육<br>EWHA ART</div>
+          <div class="director-badge">
+            16년 미술교육 전문<br>EWHA ART DIRECT
+          </div>
         </div>
         <div>
-          <div class="kicker">DIRECTOR</div>
-          <h2>미술과 교육을 함께 공부한<br>원장이 직접 설계합니다.</h2>
+          <div class="kicker">DIRECTOR PROFILE</div>
+          <h2>미술과 교육을 함께 전공한<br>원장이 직접 설계합니다.</h2>
           <p class="lead">디자인 현장과 교육 현장을 모두 경험한 원장이 아이의 나이와 표현 수준에 맞춰 수업을 구성합니다.</p>
-          <div class="career">
-            <div>이화여자대학교 미술 전공</div>
-            <div>국가공인 중등 2급 정교사</div>
-            <div>디자인 실무 경력</div>
-            <div>미술심리 관련 전문성</div>
-            <div>특수아동지도 관련 전문성</div>
-            <div>언어발달지도 관련 전문성</div>
-            <div>16년 미술교육 현장 운영</div>
-            <div>유아–중등 단계형 프로그램</div>
+          <div class="career-grid">
+            <div>🎓 이화여자대학교 미술 전공</div>
+            <div>📜 국가공인 중등 2급 정교사</div>
+            <div>🎨 디자인 실무 및 조형 경력</div>
+            <div>🧠 미술심리 전문 과정</div>
+            <div>🌱 특수아동지도 전문성</div>
+            <div>🗣️ 언어발달지도 전문성</div>
+            <div>🏫 16년 교육현장 직접 운영</div>
+            <div>📐 유아–중등 단계별 프로그램</div>
           </div>
-          <div class="quote">“정답을 빨리 만드는 기술보다, 스스로 생각을 꺼내는 힘을 키웁니다.”</div>
+          <div class="quote-box">
+            “정답을 빨리 만드는 기술보다, 스스로 생각을 꺼내는 힘을 키웁니다.”
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- 9. CONNECT: 더 많은 수업 이야기 -->
     <section class="bg-sage">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <div class="kicker">MORE EWHA ART</div>
+            <div class="kicker">MORE CHANNELS</div>
             <h2>더 많은 수업 이야기를<br>확인하세요.</h2>
           </div>
         </div>
-        <div class="connect">
-          <a href="https://blog.naver.com/sodamc93" target="_blank" rel="noopener">네이버 블로그<small>수업 기록 · 교육
-              이야기</small></a>
-          <a href="https://www.instagram.com/ewha_art_min/" target="_blank" rel="noopener">인스타그램<small>작품 · 공간 · 수업
-              소식</small></a>
-          <a href="https://reactandcode.github.io/ewha/jak.html" target="_blank" rel="noopener">학년별 작품<small>유치부부터
-              중등까지</small></a>
-          <a href="https://reactandcode.github.io/ewha/su.html" target="_blank" rel="noopener">수상·성과<small>이화미술공작소의
-              기록</small></a>
+        <div class="connect-grid">
+          <a href="https://blog.naver.com/sodamc93" target="_blank" rel="noopener" class="connect-card">
+            네이버 블로그
+            <small>수업 기록 · 자세한 교육 이야기</small>
+          </a>
+          <a href="https://www.instagram.com/ewha_art_min/" target="_blank" rel="noopener" class="connect-card">
+            공식 인스타그램
+            <small>작품 · 공간 · 일상 소식</small>
+          </a>
+          <a href="https://reactandcode.github.io/ewha/jak.html" target="_blank" rel="noopener" class="connect-card">
+            학년별 작품집
+            <small>유치부부터 중등까지</small>
+          </a>
+          <a href="https://reactandcode.github.io/ewha/su.html" target="_blank" rel="noopener" class="connect-card">
+            수상 및 성과
+            <small>이화미술공작소의 발자취</small>
+          </a>
         </div>
       </div>
     </section>
 
-    <section id="contact" class="cta">
+    <!-- 10. CTA: 상담 문의 -->
+    <section id="contact" style="padding-bottom: 20px;">
       <div class="wrap">
-        <h2>아이에게 맞는 미술수업,<br>상담부터 시작하세요.</h2>
-        <p>연령과 현재 표현 수준에 맞춰 적합한 수업을 안내해드립니다.</p>
-        <div class="btns" style="justify-content:center">
-          <a class="btn btn-light" href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" rel="noopener">카카오톡 1:1
-            상담</a>
-          <a class="btn btn-ghost" href="https://blog.naver.com/sodamc93" target="_blank" rel="noopener">블로그 보기</a>
+        <div class="cta">
+          <h2>아이에게 맞는 미술수업,<br>편안하게 상담부터 시작하세요.</h2>
+          <p>연령과 현재 표현 수준에 맞춰 가장 적합한 수업을 정성껏 안내해드립니다.</p>
+          <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+            <a class="btn btn-light" href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" rel="noopener">
+              💬 카카오톡 1:1 상담하기
+            </a>
+            <a class="btn btn-ghost" href="https://blog.naver.com/sodamc93" target="_blank" rel="noopener">
+              블로그 둘러보기
+            </a>
+          </div>
         </div>
       </div>
     </section>
+
   </main>
 
+  <!-- 푸터 -->
   <footer>
     <div class="wrap foot">
-      <span>© EWHA ART · 이화미술공작소</span>
-      <span>서울 영등포구 문래로 92 대소빌딩 4층</span>
+      <span>© EWHA ART · 이화미술공작소 (SINCE 2011)</span>
+      <span>서울 영등포구 문래로 92 대소빌딩 4층 · @ewha_art_min</span>
     </div>
   </footer>
+
+  <!-- 인스타그램 포스트 상세 모달 -->
+  <div class="insta-modal" id="insta-modal" onclick="handleBackdropClick(event)">
+    <div class="modal-box">
+      <div class="modal-top">
+        <div class="modal-user">
+          <img src="logo.jpg" alt="이화미술공작소">
+          <div>
+            <div class="modal-user-name">ewha_art_min <span class="verified-check">✓</span></div>
+            <div class="modal-location" id="modal-loc">이화미술공작소 · 문래동</div>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-img-container" ondblclick="triggerModalHeart()">
+        <img id="modal-img" src="" alt="게시물 상세">
+        <div class="big-heart" id="big-heart">❤️</div>
+      </div>
+
+      <div class="modal-content">
+        <div class="modal-actions">
+          <button class="heart-btn" id="modal-heart-btn" onclick="toggleModalLike()">❤️</button>
+          <span style="font-size: 13.5px; font-weight: 700;" id="modal-likes-count">좋아요 184개</span>
+        </div>
+        <div class="modal-caption-text">
+          <strong style="margin-right: 6px;">ewha_art_min</strong>
+          <span id="modal-caption"></span>
+        </div>
+        <div class="modal-hashtags" id="modal-hashtags"></div>
+
+        <div class="modal-cta-box">
+          <span class="modal-cta-text">수업 등록 및 체험 문의</span>
+          <a href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" class="modal-cta-btn">카톡 상담 💬</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 우측 하단 플로팅 인스타 상담 위젯 -->
+  <a href="https://open.kakao.com/o/sCpZZ7vi" target="_blank" class="floating-insta-widget" title="1:1 상담 바로가기">
+    <div class="widget-ring">
+      <img src="logo.jpg" alt="로고">
+    </div>
+    <div class="widget-text">
+      <b>이화미술공작소</b>
+      <span>1:1 카톡 상담 💬</span>
+    </div>
+  </a>
+
+  <!-- 스크립트 -->
+  <script>
+    const postsData = [
+      {
+        src: "climbing_art.jpg",
+        location: "이화미술공작소 · 문래동",
+        likes: 184,
+        caption: "평면 드로잉에서 출발하여 입체 클라이밍 오브제로 완성한 프로젝트! 종이 위를 벗어나 손으로 구조를 만들며 공간 지각력을 입체적으로 키웁니다.",
+        hashtags: "#이화미술공작소 #문래동미술 #초등미술 #입체조형 #동작드로잉"
+      },
+      {
+        src: "space_3.jpg",
+        location: "이화미술공작소 아틀리에",
+        likes: 210,
+        caption: "따뜻한 채광과 여유로운 작업대에서 아이들의 자유로운 상상력이 피어나는 공간 ✨ 환경이 편안할 때 표현의 몰입도 깊어집니다.",
+        hashtags: "#문래동아동미술 #학원인테리어 #아틀리에 #창의공간 #이화미술공작소"
+      },
+      {
+        src: "class_group.jpg",
+        location: "소수정예 그룹 수업 현장",
+        likes: 195,
+        caption: "함께 배우지만 표현은 각자 다르게. 따라 그리기보다 자기만의 질문과 시선을 꺼내는 맞춤형 소수정예 수업입니다.",
+        hashtags: "#소수정예미술 #문래초 #영문초 #문래동학원 #자기주도표현"
+      },
+      {
+        src: "mozart_art.jpg",
+        location: "클래식 음악 융합 프로젝트",
+        likes: 232,
+        caption: "귀로 음악을 듣고, 눈과 손으로 거장의 인물과 음악적 리듬을 시각화합니다. 음악과 미술이 만나는 공감각 융합 클래스!",
+        hashtags: "#융합미술 #모차르트 #음악미술 #인물화 #스토리텔링아트"
+      },
+      {
+        src: "poster_elementary_2.png",
+        location: "6-7세 예비초등 정규반",
+        likes: 167,
+        caption: "6-7세 예비초등 프로그램 🎨 형태를 관찰하고 생각을 그림으로 연결하여 초등학교 입학 후 그림일기와 표현 활동에 큰 자신감을 심어줍니다.",
+        hashtags: "#예비초등 #7세미술 #그림일기 #문래유치원 #아동미술기초"
+      },
+      {
+        src: "young_class_1.jpg",
+        location: "저학년 기초조형 클래스",
+        likes: 178,
+        caption: "손으로 빚고 만지며 형태 감각을 체득하는 저학년 수업! 찰흙과 다양한 오브제를 통해 손끝의 소근육 발달과 공간 지각력을 함께 키웁니다.",
+        hashtags: "#초등저학년미술 #조형미술 #촉감놀이 #창의표현 #문래동미술학원"
+      },
+      {
+        src: "portrait_drawing.jpg",
+        location: "고학년·중등 드로잉 아카이브",
+        likes: 245,
+        caption: "얼굴의 비례, 빛과 그림자의 음영, 인물의 개성을 담아내는 인물 드로잉 수업. 탄탄한 기초 데생 실력이 고학년의 표현 깊이를 결정합니다.",
+        hashtags: "#인물소묘 #인물드로잉 #초등고학년미술 #중등미술 #기초소묘"
+      },
+      {
+        src: "guitar_shell.jpg",
+        location: "자연물·오브제 관찰 채색",
+        likes: 189,
+        caption: "소라 껍질의 나선 구조와 기타의 선율을 결합한 창의적 정물 표현. 정밀한 관찰이 상상력과 결합될 때 새로운 이미지가 탄생합니다.",
+        hashtags: "#정밀묘사 #오브제아트 #수채화 #관찰력 #조형미술"
+      },
+      {
+        src: "dinosaur_art.jpg",
+        location: "구조와 양감 집중 소묘",
+        likes: 198,
+        caption: "복잡한 뼈대와 질감을 연필 한 자루로 생생하게 살려낸 공룡 소묘! 선의 강약과 명암을 이해하면 어떤 사물이든 자신 있게 그려낼 수 있습니다.",
+        hashtags: "#연필소묘 #구조소묘 #기초드로잉 #데생 #미술기초"
+      }
+    ];
+
+    let currentIdx = 0;
+    let isLiked = false;
+
+    function openModal(idx) {
+      currentIdx = idx;
+      isLiked = false;
+      const data = postsData[idx];
+
+      document.getElementById('modal-img').src = data.src;
+      document.getElementById('modal-loc').innerText = data.location;
+      document.getElementById('modal-likes-count').innerText = `좋아요 ${data.likes}개`;
+      document.getElementById('modal-caption').innerText = data.caption;
+      document.getElementById('modal-hashtags').innerText = data.hashtags;
+
+      const heartBtn = document.getElementById('modal-heart-btn');
+      heartBtn.classList.remove('liked');
+      heartBtn.innerText = '🤍';
+
+      const modal = document.getElementById('insta-modal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('insta-modal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === 'insta-modal') {
+        closeModal();
+      }
+    }
+
+    function toggleModalLike() {
+      isLiked = !isLiked;
+      const heartBtn = document.getElementById('modal-heart-btn');
+      const likesEl = document.getElementById('modal-likes-count');
+      const baseLikes = postsData[currentIdx].likes;
+
+      if (isLiked) {
+        heartBtn.classList.add('liked');
+        heartBtn.innerText = '❤️';
+        likesEl.innerText = `좋아요 ${baseLikes + 1}개`;
+      } else {
+        heartBtn.classList.remove('liked');
+        heartBtn.innerText = '🤍';
+        likesEl.innerText = `좋아요 ${baseLikes}개`;
+      }
+    }
+
+    function triggerModalHeart() {
+      const heart = document.getElementById('big-heart');
+      heart.classList.add('animate');
+      setTimeout(() => heart.classList.remove('animate'), 600);
+
+      if (!isLiked) {
+        toggleModalLike();
+      }
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function filterGallery(category, btn) {
+      const items = document.querySelectorAll('.insta-post-item');
+      items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      if (btn) {
+        document.querySelectorAll('.gallery-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      const gallerySec = document.getElementById('gallery');
+      if (gallerySec && !btn) {
+        gallerySec.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
 </body>
 
 </html>
