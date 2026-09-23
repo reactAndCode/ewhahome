@@ -1,0 +1,1117 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,700&display=swap');
+
+:root {
+  --primary-green: #0a4d3c;
+  --dark-green: #063c2e;
+  --accent-mint: #25b89a;
+  --soft-mint: #e2f8f2;
+  --bg-sand: #fbfbf9;
+  --bg-cream: #faf7f2;
+  --text-main: #1d2b27;
+  --text-muted: #5e736c;
+  --text-light: #94a7a0;
+  --border-subtle: #e6ede9;
+  --white: #ffffff;
+  --wood-frame: #4a3424;
+  --gold-accent: #cfa862;
+  --shadow-sm: 0 4px 12px rgba(10, 77, 60, 0.06);
+  --shadow-md: 0 12px 32px rgba(10, 77, 60, 0.12);
+  --shadow-lg: 0 24px 60px rgba(6, 60, 46, 0.18);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-xl: 38px;
+  --radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  color: var(--text-main);
+  background-color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ==========================================================================
+   헤더 & 상단 브랜드 영역
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  z-index: 100;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: all 0.3s ease;
+}
+
+.brand-section {
+  padding: 22px 0 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-logo-wrap {
+  width: 68px;
+  height: 68px;
+  margin-bottom: 6px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.brand-logo-wrap:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-title {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -1.2px;
+  color: var(--primary-green);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   네비게이션 메뉴바
+   ========================================================================== */
+.nav-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 58px;
+  border-top: 1px solid #f0f4f2;
+}
+
+.nav-menu-list {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-link {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2b3d36;
+  position: relative;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary-green);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 2.5px;
+  background-color: var(--primary-green);
+  border-radius: 2px;
+  transition: transform 0.25s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+.nav-btn-outline {
+  border: 1.5px solid var(--border-subtle);
+  color: var(--text-main);
+  background: #fff;
+}
+
+.nav-btn-outline:hover {
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+  background: var(--soft-mint);
+}
+
+.nav-btn-primary {
+  background: var(--primary-green);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(10, 77, 60, 0.2);
+}
+
+.nav-btn-primary:hover {
+  background: var(--dark-green);
+  transform: translateY(-1px);
+}
+
+.mykid-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #e3f8f2 0%, #d1f3e9 100%);
+  color: var(--primary-green);
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid #b7e8dc;
+  transition: all 0.2s ease;
+}
+
+.mykid-badge:hover {
+  background: var(--primary-green);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(10, 77, 60, 0.25);
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  background: #fff5e6;
+  color: #b86200;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid #ffd499;
+}
+
+.admin-badge:hover {
+  background: #b86200;
+  color: #fff;
+}
+
+/* ==========================================================================
+   블로그 메인 섹션 (BEFORE & AFTER 대형 히어로)
+   ========================================================================== */
+.hero-section {
+  padding: 24px 0 20px;
+}
+
+.hero-card {
+  background-color: var(--primary-green);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(37, 184, 154, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(4, 38, 29, 0.35) 0%, transparent 50%);
+  border-radius: var(--radius-xl);
+  padding: 44px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1.32fr;
+  gap: 40px;
+  align-items: center;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.03) 10%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-content {
+  color: #ffffff;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-subtitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #6ce0c6;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 5.2vw, 68px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.hero-desc {
+  font-size: 18px;
+  line-height: 1.65;
+  color: #e5f4ef;
+  font-weight: 400;
+  margin-bottom: 36px;
+  letter-spacing: -0.4px;
+}
+
+.hero-desc strong {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  background-color: #ffffff;
+  color: var(--primary-green);
+  font-size: 15px;
+  font-weight: 800;
+  padding: 13px 26px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hero-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  background-color: #f7fffd;
+  color: var(--dark-green);
+}
+
+/* 히어로 듀얼 Before / After 뷰어 */
+.hero-dual-preview {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 440px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32);
+  background: #04291f;
+}
+
+.dual-pane {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dual-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dual-pane:hover .dual-img {
+  transform: scale(1.05);
+}
+
+.label-overlay {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  z-index: 5;
+  letter-spacing: -0.5px;
+}
+
+.hero-edit-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.hero-edit-badge:hover {
+  background: var(--accent-mint);
+  color: #04382c;
+}
+
+/* ==========================================================================
+   Before & After 4개 그리드 섹션
+   ========================================================================== */
+.before-after-section {
+  padding: 18px 0 50px;
+}
+
+.section-head-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-heading-sm {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-green);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ba-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.ba-card {
+  position: relative;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.ba-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: #bee5dc;
+}
+
+.ba-card-dual {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 200px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.ba-card-dual .pane {
+  position: relative;
+  height: 100%;
+}
+
+.ba-card-dual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.ba-card:hover .ba-card-dual img {
+  transform: scale(1.06);
+}
+
+.mini-label {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.ba-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ba-card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ba-card-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   어드민 관리 대시보드
+   ========================================================================== */
+.admin-page-wrap {
+  padding: 40px 0 80px;
+  background: #f8faf9;
+  min-height: calc(100vh - 180px);
+}
+
+.admin-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e1ebe7;
+  padding-bottom: 18px;
+}
+
+.admin-header h1 {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--primary-green);
+}
+
+.admin-panel {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid var(--primary-green);
+  padding-left: 12px;
+}
+
+.admin-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-main);
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(10, 77, 60, 0.1);
+}
+
+.img-preview-box {
+  width: 100%;
+  height: 180px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed #c0d4ce;
+  background: #f4fbf9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  margin-top: 8px;
+}
+
+.img-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   마이페이지 - 내아이 활동 액자 갤러리
+   ========================================================================== */
+.mypage-wrap {
+  padding: 40px 0 80px;
+  background: #fdfbf7;
+  min-height: calc(100vh - 180px);
+}
+
+.mypage-banner {
+  background: linear-gradient(135deg, #0a4d3c 0%, #063c2e 100%);
+  color: #fff;
+  border-radius: var(--radius-xl);
+  padding: 36px 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+}
+
+.frame-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+/* 미술관 원목 & 캔버스 액자 (Museum Art Frame) */
+.art-frame-card {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 6px;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.14),
+    inset 0 0 0 8px #f4f1eb,
+    inset 0 0 0 10px #dfd8cb;
+  border: 8px solid #3d2b1f; /* 고급 원목 몰딩 프레임 */
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.art-frame-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.art-frame-photo {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: #eee;
+  position: relative;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.art-frame-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.art-frame-card:hover .art-frame-photo img {
+  transform: scale(1.04);
+}
+
+.frame-brass-plaque {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #f9ecd2 0%, #e8d0a3 100%);
+  border: 1px solid #c8a86a;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.plaque-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #4a3418;
+}
+
+.plaque-meta {
+  font-size: 11px;
+  color: #7b5d32;
+  margin-top: 2px;
+}
+
+.frame-feedback-note {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fbf9f4;
+  border-left: 3px solid #0a4d3c;
+  font-size: 12.5px;
+  color: #44554f;
+  line-height: 1.5;
+  border-radius: 0 6px 6px 0;
+}
+
+/* ==========================================================================
+   인증 모달 & 토글러
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 30, 24, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 440px;
+  padding: 32px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   첨부 시안 반영: 연령별 수업 & 수업별 자료실 & 원장소개/교육철학 스타일
+   ========================================================================== */
+.sub-sections-wrap {
+  padding: 40px 0 80px;
+  background: #ffffff;
+}
+
+.sub-section-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: #063c2e;
+  margin-bottom: 20px;
+  letter-spacing: -0.8px;
+}
+
+/* 1. 연령별 수업 (5개 카드) */
+.age-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 50px;
+}
+
+.age-card {
+  background: #f1f8f5;
+  border: 1px solid #d9ede4;
+  border-radius: 18px;
+  padding: 24px 18px;
+  text-align: center;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 110px;
+}
+
+.age-card:hover {
+  background: #e3f4ec;
+  border-color: #0a4d3c;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(10, 77, 60, 0.08);
+}
+
+.age-card.active {
+  background: #0a4d3c;
+  border-color: #0a4d3c;
+  box-shadow: 0 10px 24px rgba(10, 77, 60, 0.18);
+}
+
+.age-card.active .age-card-title,
+.age-card.active .age-card-sub {
+  color: #ffffff;
+}
+
+.age-card-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0b4536;
+  margin-bottom: 6px;
+}
+
+.age-card-sub {
+  font-size: 12.5px;
+  color: #5c756c;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+/* 2. 수업별 자료실 (6개 카드) */
+.subject-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 54px;
+}
+
+.subject-card {
+  background: #f1f8f5;
+  border: 1px solid #d9ede4;
+  border-radius: 18px;
+  padding: 30px 14px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0b4536;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+}
+
+.subject-card:hover {
+  background: #e3f4ec;
+  border-color: #0a4d3c;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(10, 77, 60, 0.08);
+}
+
+.subject-card.active {
+  background: #0a4d3c;
+  color: #ffffff;
+  border-color: #0a4d3c;
+  box-shadow: 0 10px 24px rgba(10, 77, 60, 0.18);
+}
+
+/* 3. 하단 2단 그리드: 원장 소개 & 이화미술의 교육철학 */
+.director-philosophy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 28px;
+  margin-bottom: 36px;
+}
+
+/* 원장 소개 박스 */
+.director-intro-panel {
+  background: #f1f8f5;
+  border: 1px solid #d9ede4;
+  border-radius: 26px;
+  padding: 36px 32px;
+}
+
+.director-card-body {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.director-photo-circle {
+  width: 130px;
+  height: 160px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background: #fff;
+}
+
+.director-info-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: #0b4536;
+  margin-bottom: 14px;
+}
+
+.director-bullet-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.director-bullet-item {
+  font-size: 13px;
+  color: #3b5049;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.director-bullet-item::before {
+  content: '•';
+  color: #0a4d3c;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* 이화미술의 교육철학 박스 */
+.philosophy-panel {
+  background: #f1f8f5;
+  border: 1px solid #d9ede4;
+  border-radius: 26px;
+  padding: 36px 32px;
+}
+
+.philosophy-2x2-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.philosophy-white-card {
+  background: #ffffff;
+  border: 1px solid #e2ebe6;
+  border-radius: 18px;
+  padding: 22px 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.philosophy-white-card:hover {
+  transform: translateY(-2px);
+  border-color: #a6d8c8;
+  box-shadow: 0 8px 20px rgba(10, 77, 60, 0.07);
+}
+
+.philosophy-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0b4536;
+  margin-bottom: 8px;
+}
+
+.philosophy-card-desc {
+  font-size: 13px;
+  color: #556c64;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+/* 4. 최하단 링크 버튼 3종 (학부모 브리핑, 교육 이야기, 지난 수업 아카이브) */
+.bottom-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.bottom-link-card {
+  background: #f1f8f5;
+  border: 1px solid #d9ede4;
+  border-radius: 18px;
+  padding: 24px 28px;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 105px;
+}
+
+.bottom-link-card:hover {
+  background: #e3f4ec;
+  border-color: #0a4d3c;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(10, 77, 60, 0.09);
+}
+
+.bottom-link-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  font-weight: 800;
+  color: #0b4536;
+  margin-bottom: 6px;
+}
+
+.bottom-link-head span.arrow {
+  font-family: inherit;
+  transition: transform 0.2s ease;
+}
+
+.bottom-link-card:hover .bottom-link-head span.arrow {
+  transform: translateX(4px);
+}
+
+.bottom-link-sub {
+  font-size: 13.5px;
+  color: #5c756c;
+  line-height: 1.4;
+}
+
+/* 5. 최하단 푸터 브랜딩 (첨부 시안 3) */
+.site-footer-branding {
+  background: #f7faf8;
+  border-top: 1px solid #e5ede9;
+  padding: 44px 0 54px;
+  text-align: center;
+}
+
+.footer-brand-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0b4536;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.footer-brand-eng {
+  font-size: 13.5px;
+  color: #557268;
+  letter-spacing: 0.2px;
+}
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 992px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+  }
+  .hero-dual-preview {
+    height: 340px;
+  }
+  .ba-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .frame-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .age-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .subject-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .director-philosophy-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-bar-container {
+    height: auto;
+    padding: 12px 0;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .nav-menu-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+  .hero-title {
+    font-size: 38px;
+  }
+  .ba-grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .frame-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  .age-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .subject-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .director-card-body {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .director-photo-circle {
+    margin: 0 auto;
+  }
+  .philosophy-2x2-grid {
+    grid-template-columns: 1fr;
+  }
+  .bottom-links-grid {
+    grid-template-columns: 1fr;
+  }
+}

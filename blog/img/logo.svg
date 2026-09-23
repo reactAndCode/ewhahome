@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130" fill="none">
+  <!-- Crown on top -->
+  <path d="M90 28 L95 18 L100 24 L105 18 L110 28 Z" fill="#009688" stroke="#009688" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="95" cy="17" r="1.5" fill="#009688"/>
+  <circle cx="100" cy="23" r="1.5" fill="#009688"/>
+  <circle cx="105" cy="17" r="1.5" fill="#009688"/>
+  
+  <!-- Ribbon Wings Left & Right -->
+  <path d="M72 45 L62 36 L70 54 L62 72 L72 63 Z" fill="#00a390" />
+  <path d="M128 45 L138 36 L130 54 L138 72 L128 63 Z" fill="#00a390" />
+  
+  <!-- Main Badge Outer -->
+  <rect x="74" y="32" width="52" height="44" rx="4" fill="#009688" stroke="#00796b" stroke-width="1"/>
+  <!-- Main Badge Inner Frame -->
+  <rect x="77" y="35" width="46" height="38" rx="2" fill="#ffffff" stroke="#009688" stroke-width="1.5"/>
+  
+  <!-- Text inside badge -->
+  <text x="100" y="47" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="7" font-weight="600" fill="#00897b" letter-spacing="0.5">Kids Atelier</text>
+  <text x="100" y="63" text-anchor="middle" font-family="'Pretendard', sans-serif" font-size="12" font-weight="900" fill="#00897b" letter-spacing="1">EWHA</text>
+  
+  <!-- Script text below badge -->
+  <text x="100" y="90" text-anchor="middle" font-family="'Nanum Pen Script', 'Pretendard', cursive, sans-serif" font-size="13" font-weight="700" fill="#00796b" letter-spacing="1">이화미술공작소</text>
+</svg>
