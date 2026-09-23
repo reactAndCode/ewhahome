@@ -51,11 +51,21 @@ jobs:
           cp -r *.jpg *.png _site/ 2>/dev/null || true
           [ -f CNAME ] && cp CNAME _site/
 
-          # 2. Next.js 빌드 산출물을 /blog 경로로 복사
+          # 2. 루트 /img/ 경로 생성 및 모든 이미지 복사 (/img/... 요청 대응)
+          mkdir -p _site/img
+          cp -r *.jpg *.png _site/img/ 2>/dev/null || true
+          cp -r blog/public/img/* _site/img/ 2>/dev/null || true
+
+          # 3. Next.js 빌드 산출물을 /blog 경로로 복사
           mkdir -p _site/blog
           cp -r blog/out/* _site/blog/
 
-          # 3. Jekyll 무시 방지 (.nojekyll 생성: _next 폴더 서빙 필수)
+          # 4. /blog/img/ 에도 모든 이미지 복사 (/blog/img/... 요청 대응)
+          mkdir -p _site/blog/img
+          cp -r *.jpg *.png _site/blog/img/ 2>/dev/null || true
+          cp -r blog/public/img/* _site/blog/img/ 2>/dev/null || true
+
+          # 5. Jekyll 무시 방지 (.nojekyll 생성: _next 폴더 서빙 필수)
           touch _site/.nojekyll
           touch _site/blog/.nojekyll
 

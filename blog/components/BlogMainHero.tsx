@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MainHeroData, AuthUser } from '../lib/store';
+import { MainHeroData, AuthUser, getAssetUrl } from '../lib/store';
 import { Settings, ArrowRight } from 'lucide-react';
 
 interface BlogMainHeroProps {
@@ -50,7 +50,7 @@ export default function BlogMainHero({ data, currentUser }: BlogMainHeroProps) {
             <div className="dual-pane">
               <div className="label-overlay">before</div>
               <Image 
-                src={data.beforeImg} 
+                src={getAssetUrl(data.beforeImg)} 
                 alt="이화미술공작소 수업 전 Before 스케치" 
                 fill 
                 className="dual-img"
@@ -63,7 +63,7 @@ export default function BlogMainHero({ data, currentUser }: BlogMainHeroProps) {
             <div className="dual-pane">
               <div className="label-overlay">after</div>
               <Image 
-                src={data.afterImg} 
+                src={getAssetUrl(data.afterImg)} 
                 alt="이화미술공작소 수업 후 After 완성작" 
                 fill 
                 className="dual-img"

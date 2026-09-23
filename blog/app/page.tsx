@@ -10,6 +10,7 @@ import {
   MainHeroData, 
   BeforeAfterCardData, 
   AuthUser,
+  getAssetUrl,
   DEFAULT_HERO_DATA,
   DEFAULT_CARDS 
 } from '../lib/store';
@@ -152,7 +153,7 @@ export default function BlogHomePage() {
                 {/* 원장님 사진 */}
                 <div className="director-photo-circle">
                   <Image 
-                    src="/img/director.jpg" 
+                    src={getAssetUrl('/img/director.jpg')} 
                     alt="이화미술공작소 원장 정소담" 
                     fill 
                     style={{ objectFit: 'cover' }}

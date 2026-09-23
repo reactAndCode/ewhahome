@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { getCurrentUser, setCurrentUser, AuthUser } from '../lib/store';
+import { getCurrentUser, setCurrentUser, AuthUser, getAssetUrl } from '../lib/store';
 import { LogIn, UserPlus, LogOut, Shield, Heart, Sparkles } from 'lucide-react';
 
 export default function Header() {
@@ -104,7 +104,7 @@ export default function Header() {
         <div className="brand-section">
           <Link href="/" className="brand-logo-wrap" title="이화미술공작소 홈">
             <Image 
-              src="/img/logo.svg" 
+              src={getAssetUrl('/img/logo.svg')} 
               alt="Kids Atelier EWHA Logo" 
               width={76} 
               height={76} 

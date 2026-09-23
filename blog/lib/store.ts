@@ -39,6 +39,19 @@ export interface AuthUser {
   kidName?: string;
 }
 
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
+export function getAssetUrl(path: string): string {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+    return path;
+  }
+  if (BASE_PATH && path.startsWith('/') && !path.startsWith(BASE_PATH)) {
+    return `${BASE_PATH}${path}`;
+  }
+  return path;
+}
+
 // 첨부 시안 기본값
 export const DEFAULT_HERO_DATA: MainHeroData = {
   subTitle: '그림, 이렇게 달라집니다!',

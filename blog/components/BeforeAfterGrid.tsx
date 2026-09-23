@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BeforeAfterCardData, AuthUser } from '../lib/store';
+import { BeforeAfterCardData, AuthUser, getAssetUrl } from '../lib/store';
 import { Sparkles, Edit3 } from 'lucide-react';
 
 interface BeforeAfterGridProps {
@@ -39,7 +39,7 @@ export default function BeforeAfterGrid({ cards, currentUser }: BeforeAfterGridP
                 <div className="pane">
                   <span className="mini-label">before</span>
                   <Image 
-                    src={card.beforeImg} 
+                    src={getAssetUrl(card.beforeImg)} 
                     alt={`${card.title} - Before`} 
                     fill 
                     sizes="(max-width: 768px) 100vw, 25vw"
@@ -48,7 +48,7 @@ export default function BeforeAfterGrid({ cards, currentUser }: BeforeAfterGridP
                 <div className="pane">
                   <span className="mini-label">after</span>
                   <Image 
-                    src={card.afterImg} 
+                    src={getAssetUrl(card.afterImg)} 
                     alt={`${card.title} - After`} 
                     fill 
                     sizes="(max-width: 768px) 100vw, 25vw"
