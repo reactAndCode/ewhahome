@@ -122,8 +122,21 @@ button {
 .nav-menu-list {
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 30px;
   list-style: none;
+}
+
+.menu-brand-lead {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 6px;
+  padding-right: 18px;
+  border-right: 1.5px solid #e2ebe6;
+  transition: transform 0.2s ease;
+}
+
+.menu-brand-lead:hover {
+  transform: scale(1.03);
 }
 
 .nav-link {

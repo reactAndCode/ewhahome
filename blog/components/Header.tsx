@@ -23,20 +23,20 @@ export default function Header() {
   }, []);
 
   const handleQuickLogin = (role: 'parent' | 'admin') => {
-    const demoUser: AuthUser = role === 'admin' 
+    const demoUser: AuthUser = role === 'admin'
       ? {
-          id: 'admin_master',
-          email: 'admin@ewha-art.com',
-          name: '총괄 원장선생님',
-          role: 'admin'
-        }
+        id: 'admin_master',
+        email: 'admin@ewha-art.com',
+        name: '총괄 원장선생님',
+        role: 'admin'
+      }
       : {
-          id: 'parent_minji',
-          email: 'minji_mom@gmail.com',
-          name: '김민지 학부모님',
-          role: 'parent',
-          kidName: '김민지 (8세)'
-        };
+        id: 'parent_minji',
+        email: 'minji_mom@gmail.com',
+        name: '김민지 학부모님',
+        role: 'parent',
+        kidName: '김민지 (8세)'
+      };
     setCurrentUser(demoUser);
     setUser(demoUser);
     setShowAuthModal(false);
@@ -82,14 +82,14 @@ export default function Header() {
               <span style={{ color: '#999' }}>비로그인</span>
             )}
             <div style={{ display: 'flex', gap: '6px' }}>
-              <button 
-                onClick={() => handleQuickLogin('parent')} 
+              <button
+                onClick={() => handleQuickLogin('parent')}
                 style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: '#d7f3ea', color: '#084d3c', fontWeight: 700 }}
               >
                 학부모 전환
               </button>
-              <button 
-                onClick={() => handleQuickLogin('admin')} 
+              <button
+                onClick={() => handleQuickLogin('admin')}
                 style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: '#fff0d9', color: '#b86200', fontWeight: 700 }}
               >
                 어드민 전환
@@ -101,6 +101,7 @@ export default function Header() {
 
       <div className="container">
         {/* 중앙 상단: 브랜드 로고 및 타이틀 */}
+        {/*
         <div className="brand-section">
           <Link href="/" className="brand-logo-wrap" title="이화미술공작소 홈">
             <Image 
@@ -116,10 +117,24 @@ export default function Header() {
             <h1 className="brand-title">이화미술공작소</h1>
           </Link>
         </div>
+        */}
 
         {/* 네비게이션 메뉴바 */}
         <div className="nav-bar-container">
           <ul className="nav-menu-list">
+            {/* 메뉴 젤 앞 브랜드 로고 (첨부 시안 반영) */}
+            <li className="menu-brand-lead">
+              <Link href="/" title="이화미술공작소 홈" style={{ display: 'inline-flex', alignItems: 'center', marginRight: '8px' }}>
+                <Image
+                  src={getAssetUrl('/img/ewha-art-brand.svg')}
+                  alt="EWHA ART KIDS ATELIER"
+                  width={160}
+                  height={38}
+                  priority
+                  style={{ objectFit: 'contain' }}
+                />
+              </Link>
+            </li>
             <li>
               <Link href="/#before-after-hero" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
                 아이의 변화
@@ -186,14 +201,14 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <button 
+                <button
                   onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
                   className="nav-btn nav-btn-outline"
                 >
                   <LogIn size={15} />
                   <span>로그인</span>
                 </button>
-                <button 
+                <button
                   onClick={() => { setAuthMode('signup'); setShowAuthModal(true); }}
                   className="nav-btn nav-btn-primary"
                 >
@@ -226,26 +241,26 @@ export default function Header() {
             <form onSubmit={handleFormSubmit}>
               <div className="form-group">
                 <label className="form-label">이메일 주소</label>
-                <input 
-                  type="email" 
-                  className="form-input" 
-                  placeholder="parent@example.com" 
+                <input
+                  type="email"
+                  className="form-input"
+                  placeholder="parent@example.com"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
               {authMode === 'signup' && (
                 <div className="form-group">
                   <label className="form-label">성함 / 학부모님 성함</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
-                    placeholder="김민지 어머님" 
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="김민지 어머님"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
-                    required 
+                    required
                   />
                 </div>
               )}
@@ -253,7 +268,7 @@ export default function Header() {
               <div className="form-group">
                 <label className="form-label">계정 권한 선택</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setRoleInput('parent')}
                     style={{
@@ -268,7 +283,7 @@ export default function Header() {
                   >
                     🎨 학부모 계정
                   </button>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setRoleInput('admin')}
                     style={{
@@ -286,9 +301,9 @@ export default function Header() {
                 </div>
               </div>
 
-              <button 
-                type="submit" 
-                className="hero-btn" 
+              <button
+                type="submit"
+                className="hero-btn"
                 style={{ width: '100%', justifyContent: 'center', marginTop: '12px', background: '#0a4d3c', color: '#fff' }}
               >
                 {authMode === 'login' ? '로그인 완료' : '가입하기'}
