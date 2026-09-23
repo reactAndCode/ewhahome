@@ -160,11 +160,6 @@ export default function Header() {
                 교육철학
               </Link>
             </li>
-            <li>
-              <Link href="/#classes" className="nav-link">
-                지난 수업
-              </Link>
-            </li>
 
             {/* 학부모 로그인 시 나타나는 '내아이' 메뉴 */}
             {user && (

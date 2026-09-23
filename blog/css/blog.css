@@ -122,21 +122,85 @@ button {
 .nav-menu-list {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 24px;
   list-style: none;
 }
 
+/* 좌측 로고 가장자리 반짝반짝 블링블링 효과 (Bling-Bling Sparkle Glow) */
 .menu-brand-lead {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  margin-right: 6px;
-  padding-right: 18px;
-  border-right: 1.5px solid #e2ebe6;
-  transition: transform 0.2s ease;
+  margin-right: 8px;
+  padding: 4px 14px 4px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f7fdfb 0%, #e8f9f4 100%);
+  border: 1.5px solid #8ee2ce;
+  box-shadow: 0 0 12px rgba(37, 184, 154, 0.35);
+  animation: blingGlow 2.8s ease-in-out infinite alternate;
+  transition: all 0.25s ease;
+  overflow: visible;
 }
 
 .menu-brand-lead:hover {
-  transform: scale(1.03);
+  transform: scale(1.05);
+  box-shadow: 0 0 22px rgba(37, 184, 154, 0.7), 0 0 35px rgba(108, 226, 203, 0.4);
+}
+
+/* 1. 가장자리 은은한 네온 펄스 글로우 */
+@keyframes blingGlow {
+  0% {
+    box-shadow: 0 0 8px rgba(37, 184, 154, 0.3), inset 0 0 6px rgba(255, 255, 255, 0.9);
+    border-color: #9ee2d0;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(37, 184, 154, 0.65), 0 0 32px rgba(78, 222, 192, 0.35), inset 0 0 12px rgba(255, 255, 255, 1);
+    border-color: #25b89a;
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(37, 184, 154, 0.38), inset 0 0 8px rgba(255, 255, 255, 0.9);
+    border-color: #61dec2;
+  }
+}
+
+/* 2. 가장자리를 스쳐 지나가는 빛나는 광선 (Shimmering Beam) */
+.menu-brand-lead::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -80%;
+  width: 50%;
+  height: calc(100% + 4px);
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  transform: skewX(-25deg);
+  animation: blingShimmer 3s infinite ease-in-out;
+  pointer-events: none;
+  border-radius: 999px;
+}
+
+@keyframes blingShimmer {
+  0%, 25% { left: -80%; opacity: 0; }
+  35% { opacity: 1; }
+  60%, 100% { left: 180%; opacity: 0; }
+}
+
+/* 3. 우측 상단 반짝이는 스파클 별 (Twinkle Star) */
+.menu-brand-lead::before {
+  content: '✦';
+  position: absolute;
+  top: -7px;
+  right: -5px;
+  font-size: 13px;
+  color: #25b89a;
+  text-shadow: 0 0 8px #25b89a, 0 0 14px #6ce2cb;
+  animation: sparkleTwinkle 1.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% { transform: scale(0.7) rotate(0deg); opacity: 0.4; }
+  50% { transform: scale(1.35) rotate(35deg); opacity: 1; filter: drop-shadow(0 0 5px #25b89a); }
 }
 
 .nav-link {
