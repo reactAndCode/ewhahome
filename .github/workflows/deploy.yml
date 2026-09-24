@@ -42,6 +42,8 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: '/blog'
+          NEXT_PUBLIC_SUPABASE_URL: 'https://uizoxtnvqisiicvcxgty.supabase.co'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpem94dG52cWlzaWljdmN4Z3R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxMzYzNDAsImV4cCI6MjA3NzcxMjM0MH0.DAfvBKVwXkdv7UX0G25gNJG8shkdopHFuRkcvTTuGtM'
 
       - name: Prepare Site for GitHub Pages
         run: |

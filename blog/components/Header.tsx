@@ -83,6 +83,7 @@ export default function Header() {
           setShowAuthModal(false);
           setEmailInput('');
           setPasswordInput('');
+          alert(`로그인되었습니다! 환영합니다, ${res.user.name}님`);
         }
       } else {
         const res = await signUpWithSupabase(
@@ -100,6 +101,7 @@ export default function Header() {
           setEmailInput('');
           setPasswordInput('');
           setNameInput('');
+          alert(`Supabase 회원가입이 성공적으로 완료되었습니다!\n계정: ${res.user.email}\nSupabase 대시보드(Users)에서 새로고침하여 확인하실 수 있습니다.`);
         }
       }
     } catch (err: any) {

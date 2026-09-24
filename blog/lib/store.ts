@@ -495,37 +495,37 @@ export async function signUpWithSupabase(
   role: 'admin' | 'parent' = 'parent',
   kidName?: string
 ): Promise<{ user: AuthUser | null; error: string | null }> {
-  if (!isSupabaseConfigured || !supabase) {
-    const fallbackUser: AuthUser = { id: 'user_' + Date.now(), email, name, role, kidName };
-    setCurrentUser(fallbackUser);
-    return { user: fallbackUser, error: null };
-  }
-
   try {
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: email.trim(),
+      password: password,
       options: {
-        data: { name, role, kidName }
+        data: { name: name.trim(), role, kidName: kidName || (role === 'parent' ? `${name.trim()}의 자녀` : undefined) }
       }
     });
 
-    if (error) return { user: null, error: error.message };
+    if (error) {
+      console.error('Supabase auth.signUp 에러:', error);
+      return { user: null, error: error.message };
+    }
 
     const sbUser = data.user;
-    if (!sbUser) return { user: null, error: '회원가입 요청이 전송되었습니다. 이메일 확인을 진행해주세요.' };
+    if (!sbUser) {
+      return { user: null, error: '회원가입 요청이 완료되지 않았습니다. 이메일을 확인해 주세요.' };
+    }
 
     const authUser: AuthUser = {
       id: sbUser.id,
       email: sbUser.email || email,
-      name,
+      name: name.trim(),
       role,
-      kidName
+      kidName: kidName || (role === 'parent' ? `${name.trim()}의 자녀` : undefined)
     };
 
     setCurrentUser(authUser);
     return { user: authUser, error: null };
   } catch (err: any) {
+    console.error('signUpWithSupabase 예외 발생:', err);
     return { user: null, error: err.message || '회원가입 중 오류가 발생했습니다.' };
   }
 }
