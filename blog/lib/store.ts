@@ -1,6 +1,7 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 
 export interface MainHeroData {
+  id?: string;
   subTitle: string;
   title: string;
   description: string;
@@ -146,8 +147,11 @@ export const DEFAULT_KID_PHOTOS: KidActivityPhoto[] = [
   }
 ];
 
-// 로컬 스토리지 헬퍼
 const IS_BROWSER = typeof window !== 'undefined';
+
+// ==============================================================================
+// 1. 로컬 스토리지 Fallback 동기 함수들
+// ==============================================================================
 
 export function getStoredHeroData(): MainHeroData {
   if (!IS_BROWSER) return DEFAULT_HERO_DATA;
@@ -181,17 +185,13 @@ export function saveCards(cards: BeforeAfterCardData[]): void {
 
 export function getStoredKidPhotos(userId?: string): KidActivityPhoto[] {
   if (!IS_BROWSER) {
-    if (userId) {
-      return DEFAULT_KID_PHOTOS.filter(p => p.userId === userId);
-    }
+    if (userId) return DEFAULT_KID_PHOTOS.filter(p => p.userId === userId);
     return DEFAULT_KID_PHOTOS;
   }
   try {
     const data = localStorage.getItem('ewha_kid_photos');
     const photos: KidActivityPhoto[] = data ? JSON.parse(data) : DEFAULT_KID_PHOTOS;
-    if (userId) {
-      return photos.filter(p => p.userId === userId);
-    }
+    if (userId) return photos.filter(p => p.userId === userId);
     return photos;
   } catch {
     return DEFAULT_KID_PHOTOS;
@@ -215,7 +215,6 @@ export function addKidPhoto(photo: Omit<KidActivityPhoto, 'id'>): KidActivityPho
   return newPhoto;
 }
 
-// 현재 로그인 유저
 export function getCurrentUser(): AuthUser | null {
   if (!IS_BROWSER) return null;
   try {
@@ -234,3 +233,379 @@ export function setCurrentUser(user: AuthUser | null): void {
     localStorage.removeItem('ewha_current_user');
   }
 }
+
+// ==============================================================================
+// 2. Supabase DB 비동기 연동 함수 (Supabase 우선, 실패시 LocalStorage 자동 Fallback)
+// ==============================================================================
+
+/** 메인 히어로 데이터 가져오기 */
+export async function fetchHeroData(): Promise<MainHeroData> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('blog_hero_settings')
+        .select('*')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        const hero: MainHeroData = {
+          id: data.id,
+          subTitle: data.sub_title,
+          title: data.title,
+          description: data.description,
+          buttonText: data.button_text,
+          buttonLink: data.button_link,
+          beforeImg: data.before_img_url,
+          afterImg: data.after_img_url
+        };
+        saveHeroData(hero);
+        return hero;
+      }
+    } catch (err) {
+      console.warn('Supabase fetchHeroData fallback to local storage:', err);
+    }
+  }
+  return getStoredHeroData();
+}
+
+/** 메인 히어로 데이터 저장하기 */
+export async function updateHeroData(hero: MainHeroData): Promise<boolean> {
+  saveHeroData(hero); // 로컬 캐싱 즉시 반영
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const payload = {
+        sub_title: hero.subTitle,
+        title: hero.title,
+        description: hero.description,
+        button_text: hero.buttonText,
+        button_link: hero.buttonLink,
+        before_img_url: hero.beforeImg,
+        after_img_url: hero.afterImg,
+        updated_at: new Date().toISOString()
+      };
+
+      // 기존 레코드 존재 여부 확인
+      const { data: existing } = await supabase.from('blog_hero_settings').select('id').limit(1).maybeSingle();
+      if (existing) {
+        const { error } = await supabase.from('blog_hero_settings').update(payload).eq('id', existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('blog_hero_settings').insert([payload]);
+        if (error) throw error;
+      }
+      return true;
+    } catch (err) {
+      console.error('Supabase updateHeroData error:', err);
+      return false;
+    }
+  }
+  return true;
+}
+
+/** 비포&애프터 카드 목록 가져오기 */
+export async function fetchCards(): Promise<BeforeAfterCardData[]> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('before_after_cards')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        const mapped: BeforeAfterCardData[] = data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          student: item.student_name,
+          age: item.student_age,
+          beforeImg: item.before_img_url,
+          afterImg: item.after_img_url,
+          description: item.description || ''
+        }));
+        saveCards(mapped);
+        return mapped;
+      }
+    } catch (err) {
+      console.warn('Supabase fetchCards fallback to local storage:', err);
+    }
+  }
+  return getStoredCards();
+}
+
+/** 비포&애프터 카드 목록 저장하기 */
+export async function updateCards(cards: BeforeAfterCardData[]): Promise<boolean> {
+  saveCards(cards);
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      for (const card of cards) {
+        await supabase.from('before_after_cards').upsert({
+          id: card.id,
+          title: card.title,
+          student_name: card.student,
+          student_age: card.age,
+          before_img_url: card.beforeImg,
+          after_img_url: card.afterImg,
+          description: card.description,
+          order_index: card.id,
+          updated_at: new Date().toISOString()
+        });
+      }
+      return true;
+    } catch (err) {
+      console.error('Supabase updateCards error:', err);
+      return false;
+    }
+  }
+  return true;
+}
+
+/** 내아이 활동 사진 목록 가져오기 */
+export async function fetchKidPhotos(userId?: string): Promise<KidActivityPhoto[]> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      let query = supabase.from('kid_activities').select('*').order('created_at', { ascending: false });
+      if (userId) {
+        query = query.eq('user_id', userId);
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        const mapped: KidActivityPhoto[] = data.map((item: any) => ({
+          id: item.id,
+          userId: item.user_id,
+          kidName: item.kid_name,
+          title: item.title,
+          date: item.activity_date,
+          photoUrl: item.photo_url,
+          teacherComment: item.teacher_comment || '',
+          tag: item.tag || '자유표현'
+        }));
+        return mapped;
+      }
+    } catch (err) {
+      console.warn('Supabase fetchKidPhotos fallback to local storage:', err);
+    }
+  }
+  return getStoredKidPhotos(userId);
+}
+
+/** 내아이 활동 사진 등록하기 */
+export async function createKidPhoto(photo: Omit<KidActivityPhoto, 'id'>): Promise<KidActivityPhoto> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('kid_activities').insert([{
+        user_id: photo.userId,
+        kid_name: photo.kidName,
+        title: photo.title,
+        activity_date: photo.date,
+        photo_url: photo.photoUrl,
+        teacher_comment: photo.teacherComment,
+        tag: photo.tag || '자유표현'
+      }]).select().single();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          userId: data.user_id,
+          kidName: data.kid_name,
+          title: data.title,
+          date: data.activity_date,
+          photoUrl: data.photo_url,
+          teacherComment: data.teacher_comment || '',
+          tag: data.tag
+        };
+      }
+    } catch (err) {
+      console.error('Supabase createKidPhoto error:', err);
+    }
+  }
+  return addKidPhoto(photo);
+}
+
+/** 내아이 활동 사진 삭제하기 */
+export async function deleteKidPhoto(id: string): Promise<boolean> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase.from('kid_activities').delete().eq('id', id);
+      if (error) throw error;
+    } catch (err) {
+      console.error('Supabase deleteKidPhoto error:', err);
+    }
+  }
+  if (IS_BROWSER) {
+    try {
+      const existing = getStoredKidPhotos();
+      const updated = existing.filter(p => p.id !== id);
+      localStorage.setItem('ewha_kid_photos', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return true;
+}
+
+// ==============================================================================
+// 3. Supabase Auth (로그인 / 회원가입 / 세션 관리)
+// ==============================================================================
+
+/** 이메일/비밀번호 로그인 */
+export async function signInWithSupabase(email: string, password: string):Promise<{ user: AuthUser | null; error: string | null }> {
+  if (!isSupabaseConfigured || !supabase) {
+    // Supabase 미연동시 Mock 로그인 허용
+    if (email.includes('admin')) {
+      const adminUser: AuthUser = { id: 'admin_master', email, name: '총괄 원장선생님', role: 'admin' };
+      setCurrentUser(adminUser);
+      return { user: adminUser, error: null };
+    }
+    const parentUser: AuthUser = { id: 'parent_user', email, name: '학부모 회원', role: 'parent', kidName: '민지 (8세)' };
+    setCurrentUser(parentUser);
+    return { user: parentUser, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return { user: null, error: error.message };
+
+    const sbUser = data.user;
+    const metadata = sbUser.user_metadata || {};
+    const role: 'admin' | 'parent' = email.includes('admin') || metadata.role === 'admin' ? 'admin' : 'parent';
+
+    const authUser: AuthUser = {
+      id: sbUser.id,
+      email: sbUser.email || email,
+      name: metadata.name || (role === 'admin' ? '총괄 원장선생님' : '학부모 회원'),
+      role,
+      kidName: metadata.kidName || (role === 'parent' ? '우리 아이' : undefined)
+    };
+
+    setCurrentUser(authUser);
+    return { user: authUser, error: null };
+  } catch (err: any) {
+    return { user: null, error: err.message || '로그인 중 오류가 발생했습니다.' };
+  }
+}
+
+/** 이메일 회원가입 */
+export async function signUpWithSupabase(
+  email: string, 
+  password: string, 
+  name: string, 
+  role: 'admin' | 'parent' = 'parent',
+  kidName?: string
+): Promise<{ user: AuthUser | null; error: string | null }> {
+  if (!isSupabaseConfigured || !supabase) {
+    const fallbackUser: AuthUser = { id: 'user_' + Date.now(), email, name, role, kidName };
+    setCurrentUser(fallbackUser);
+    return { user: fallbackUser, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, role, kidName }
+      }
+    });
+
+    if (error) return { user: null, error: error.message };
+
+    const sbUser = data.user;
+    if (!sbUser) return { user: null, error: '회원가입 요청이 전송되었습니다. 이메일 확인을 진행해주세요.' };
+
+    const authUser: AuthUser = {
+      id: sbUser.id,
+      email: sbUser.email || email,
+      name,
+      role,
+      kidName
+    };
+
+    setCurrentUser(authUser);
+    return { user: authUser, error: null };
+  } catch (err: any) {
+    return { user: null, error: err.message || '회원가입 중 오류가 발생했습니다.' };
+  }
+}
+
+/** 로그아웃 */
+export async function signOutSupabase(): Promise<void> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  setCurrentUser(null);
+}
+
+/** 현재 Supabase 세션 사용자 동기화 */
+export async function syncCurrentAuthUser(): Promise<AuthUser | null> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const metadata = user.user_metadata || {};
+        const role: 'admin' | 'parent' = (user.email?.includes('admin') || metadata.role === 'admin') ? 'admin' : 'parent';
+        const authUser: AuthUser = {
+          id: user.id,
+          email: user.email || '',
+          name: metadata.name || (role === 'admin' ? '총괄 원장선생님' : '학부모 회원'),
+          role,
+          kidName: metadata.kidName
+        };
+        setCurrentUser(authUser);
+        return authUser;
+      }
+    } catch (e) {
+      console.warn('Supabase auth session sync failed:', e);
+    }
+  }
+  return getCurrentUser();
+}
+
+// ==============================================================================
+// 4. Supabase Storage 파일 업로드 함수
+// ==============================================================================
+
+/**
+ * 이미지 파일을 Supabase Storage 버킷('blog-images')에 직접 업로드하고 공개 CDN URL을 반환합니다.
+ * 업로드 실패 시 null을 반환하며, 호출부에서 Base64로 Fallback 처리할 수 있습니다.
+ */
+export async function uploadImageToSupabase(file: File, folder = 'uploads'): Promise<string | null> {
+  if (!isSupabaseConfigured || !supabase) {
+    return null;
+  }
+
+  try {
+    const fileExt = file.name.split('.').pop() || 'jpg';
+    const cleanExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${cleanExt}`;
+    const filePath = `${folder}/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('blog-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    if (error) {
+      console.warn('Supabase Storage upload warning (falling back to base64):', error.message);
+      return null;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('blog-images')
+      .getPublicUrl(filePath);
+
+    return publicUrlData.publicUrl;
+  } catch (err) {
+    console.warn('Supabase Storage exception (falling back to base64):', err);
+    return null;
+  }
+}
+

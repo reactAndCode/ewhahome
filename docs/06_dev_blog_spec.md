@@ -313,3 +313,59 @@ GitHub 저장소 관리자 페이지에서 단 1번만 설정을 확인/변경�
    - 선생님이 마이페이지에 새 활동 액자(코멘트)를 등록했을 때 해당 학부모에게 카카오 알림톡이 자동 발송되는 웹훅(Webhook) 연동 가능.
 3. **액자 이미지 다운로드 및 인화 신청**:
    - 학부모가 액자 이미지를 고화질 엽서/캔버스 액자 실물로 인쇄 주문할 수 있는 연계 기능 확장 지원.
+
+---
+
+## 9. [2026-09-24 ~ 25] Supabase 클라우드 실시간 DB, Auth, Storage 연동 및 UI 최적화 수정 내역
+
+### 9.1 Supabase 클라우드 데이터베이스(DB) 실시간 연동
+1. **환경변수 설정 ([`blog/.env.local`](file:///c:/work/mydev/ewhahome/blog/.env.local))**:
+   - 실제 Supabase 프로젝트 발급 키(`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) 등록 완료.
+2. **데이터베이스 스키마 및 RLS 쿼리 최신화 ([`blog/supabase_schema.sql`](file:///c:/work/mydev/ewhahome/blog/supabase_schema.sql))**:
+   - `blog_hero_settings`: 블로그 메인 Before & After 배너 설정 (초기 레코드 자동 시딩 포함).
+   - `before_after_cards`: 하단 4개 학생 성장 카드 (초기 4개 카드 데이터 및 시퀀스 재설정).
+   - `kid_activities`: 학부모 마이페이지 내 아이 활동 사진 갤러리 테이블.
+   - 웹 프론트엔드(`anon` 공개키)에서 안전하게 CRUD를 수행할 수 있도록 RLS 정책 적용.
+3. **스마트 듀얼 스토어 비동기 CRUD 구현 ([`blog/lib/store.ts`](file:///c:/work/mydev/ewhahome/blog/lib/store.ts))**:
+   - `fetchHeroData()`, `updateHeroData()`: 메인 배너 실시간 조회 및 저장.
+   - `fetchCards()`, `updateCards()`: 학생 카드 4종 실시간 조회 및 저장.
+   - `fetchKidPhotos()`, `createKidPhoto()`: 활동 사진 실시간 조회 및 등록.
+   - Supabase 서버 장애 또는 오프라인 환경에서도 서비스가 중단되지 않도록 **LocalStorage 스마트 자동 Fallback** 완비.
+
+### 9.2 회원가입/로그인 모달 팝업 상단 짤림(치우침) 현상 근본 해결
+1. **문제 현상**:
+   - 페이지 스크롤 시 회원가입 모달이 브라우저 화면 상단 밖으로 뚫고 올라가서 이메일/비밀번호 입력란 및 닫기 버튼이 잘려 보이지 않는 현상 발생.
+2. **원인 분석**:
+   - 상단 헤더(`.site-header`)에 `position: sticky; top: 0;` 및 `backdrop-filter: blur(14px);` 속성이 지정되어 있어, CSS 명세(W3C Filter Effects)에 의해 헤더가 `position: fixed` 요소의 컨테이닝 블록(Containing Block)으로 동작하여 뷰포트가 아닌 헤더 영역 내부에 모달이 갇힘.
+3. **해결 조치 ([`blog/components/Header.tsx`](file:///c:/work/mydev/ewhahome/blog/components/Header.tsx), [`blog/css/blog.css`](file:///c:/work/mydev/ewhahome/blog/css/blog.css))**:
+   - **React Portal (`createPortal(..., document.body)`)** 적용: 모달 팝업을 헤더 태그 내부가 아닌 `document.body` 직속으로 마운트하여 헤더의 `sticky` 및 `backdrop-filter` 제약에서 완전히 독립.
+   - **CSS 뷰포트 고정 및 안전 여백**: `z-index: 999999; margin: auto; max-height: min(90vh, 640px); overflow-y: auto;`를 적용하여 저해상도 화면에서도 위아래 여백을 보장하고 모달 내부만 스크롤되도록 개선.
+   - **인증 폼 완성**: 6자리 이상 비밀번호 입력 필드, 인증 에러 메시지 알림 바, 로딩 스피너 및 닫기(✕) 버튼 인터랙션 보강.
+
+### 9.3 Supabase Storage 파일 업로드 ('blog-images' 버킷) 연동
+1. **기존 방식의 한계**:
+   - PC에서 사진 선택 시 브라우저 FileReader로 Base64 문자열로 변환하여 DB 텍스트 컬럼에 저장하던 방식으로, 대용량 이미지 업로드 시 DB 용량 낭비 및 첫 로딩 지연 우려.
+2. **신규 스토리지 연동 구조**:
+   - Supabase Storage 버킷 `blog-images` (Public) 연동.
+   - `uploadImageToSupabase(file, folder)` 함수 구현: 사진 선택 즉시 클라우드 버킷에 업로드하고, 발급된 고유 공개 CDN URL(`https://.../storage/v1/object/public/blog-images/...`)을 DB에 저장.
+   - 네트워크 장애 시에도 작업이 중단되지 않도록 Base64 자동 Fallback 유지.
+3. **Storage RLS 정책 3종 적용 ([`blog/supabase_schema.sql`](file:///c:/work/mydev/ewhahome/blog/supabase_schema.sql))**:
+   - `Public Read blog-images`: 사진 공개 조회 (SELECT)
+   - `Public Upload blog-images`: 프론트엔드 직접 업로드 (INSERT)
+   - `Public Update blog-images`: 사진 덮어쓰기/수정 (UPDATE)
+   - 대시보드 검증: `POLICIES` 수치가 `0`에서 `3`으로 정상 등록 완료 및 Node.js 스크립트로 실제 파일 업로드/조회/삭제 테스트 100% 성공 검증.
+
+### 9.4 개발 환경 안정화 및 검증
+- `npm run build` 정적 번들 컴파일 및 타입 검사 100% 통과 (`✓ Compiled successfully`).
+- 캐시 충돌(`.next`) 완벽 정리 및 개발 서버([`http://localhost:3000`](http://localhost:3000)) 정상 응답 (`HTTP Status: 200 OK`) 확인 완료.
+
+### 9.5 학부모/관리자 권한 및 기능 분리 (학부모 조회 전용 + 어드민 등록 전담)
+1. **학부모 마이페이지 ([`blog/app/mypage/page.tsx`](file:///c:/work/mydev/ewhahome/blog/app/mypage/page.tsx))**:
+   - `새 활동 사진 등록` 버튼 및 입력 모달 제거.
+   - **순수 전시/조회 전용 갤러리**로 전환하여 학부모는 원장/선생님이 등록해 주신 작품 사진, 수업 일자, 영역 태그, 지도 피드백 코멘트만 미술관 액자 형식으로 품격 있게 열람/확대 감상.
+2. **어드민 관리자 대시보드 ([`blog/app/admin/page.tsx`](file:///c:/work/mydev/ewhahome/blog/app/admin/page.tsx))**:
+   - 대메뉴 탭 구성: `1. 메인 배너 & 성장 카드 설정` / `2. 학부모 내아이 활동 사진 등록/관리 (원장님 전용)`.
+   - **활동 사진 등록 폼**: 대상 학부모 ID, 원생명, 작품 제목, 수업 일자, 수업 영역(태그), 사진 업로드(Supabase Storage 버킷 `blog-images` 자동 업로드), 선생님 피드백 코멘트 입력.
+   - **활동 사진 관리 리스트**: 등록된 사진 썸네일, 학부모 ID/원생명, 코멘트 실시간 확인 및 불필요한 사진 `삭제(deleteKidPhoto)` 기능 탑재.
+
+

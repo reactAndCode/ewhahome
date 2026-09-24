@@ -1,25 +1,44 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { getCurrentUser, setCurrentUser, AuthUser, getAssetUrl } from '../lib/store';
-import { LogIn, UserPlus, LogOut, Shield, Heart, Sparkles } from 'lucide-react';
+import { 
+  getCurrentUser, 
+  setCurrentUser, 
+  signInWithSupabase, 
+  signUpWithSupabase, 
+  signOutSupabase, 
+  syncCurrentAuthUser,
+  AuthUser, 
+  getAssetUrl 
+} from '../lib/store';
+import { LogIn, UserPlus, LogOut, Shield, Heart, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function Header() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const [nameInput, setNameInput] = useState('');
   const [roleInput, setRoleInput] = useState<'parent' | 'admin'>('parent');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 기본 로그인 유저가 없을 경우, 편리한 테스트를 위해 기본 학부모 계정 또는 상태 확인
+    setMounted(true);
     const currentUser = getCurrentUser();
     setUser(currentUser);
+
+    // Supabase Auth 세션 동기화
+    syncCurrentAuthUser().then(sbUser => {
+      if (sbUser) setUser(sbUser);
+    });
   }, []);
 
   const handleQuickLogin = (role: 'parent' | 'admin') => {
@@ -42,25 +61,52 @@ export default function Header() {
     setShowAuthModal(false);
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
+  const handleLogout = async () => {
+    await signOutSupabase();
     setUser(null);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newUser: AuthUser = {
-      id: 'user_' + Date.now(),
-      email: emailInput || 'user@example.com',
-      name: nameInput || (roleInput === 'admin' ? '관리자' : '학부모 회원'),
-      role: roleInput,
-      kidName: roleInput === 'parent' ? '내 아이' : undefined
-    };
-    setCurrentUser(newUser);
-    setUser(newUser);
-    setShowAuthModal(false);
-    setEmailInput('');
-    setNameInput('');
+    setAuthLoading(true);
+    setAuthError(null);
+
+    const pwd = passwordInput || '123456';
+
+    try {
+      if (authMode === 'login') {
+        const res = await signInWithSupabase(emailInput, pwd);
+        if (res.error) {
+          setAuthError(res.error);
+        } else if (res.user) {
+          setUser(res.user);
+          setShowAuthModal(false);
+          setEmailInput('');
+          setPasswordInput('');
+        }
+      } else {
+        const res = await signUpWithSupabase(
+          emailInput, 
+          pwd, 
+          nameInput || (roleInput === 'admin' ? '관리자' : '학부모 회원'), 
+          roleInput,
+          roleInput === 'parent' ? '내 아이' : undefined
+        );
+        if (res.error) {
+          setAuthError(res.error);
+        } else if (res.user) {
+          setUser(res.user);
+          setShowAuthModal(false);
+          setEmailInput('');
+          setPasswordInput('');
+          setNameInput('');
+        }
+      }
+    } catch (err: any) {
+      setAuthError(err.message || '인증 처리 중 오류가 발생했습니다.');
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
   return (
@@ -216,26 +262,54 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 로그인 / 회원가입 모달 팝업 */}
-      {showAuthModal && (
+      {/* 로그인 / 회원가입 모달 팝업 (createPortal을 사용하여 document.body에 직접 마운트) */}
+      {mounted && showAuthModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowAuthModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowAuthModal(false)}>✕</button>
-            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <div style={{ width: '48px', height: '48px', margin: '0 auto 8px', borderRadius: '50%', background: '#e3f7f1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Sparkles size={24} color="#0a4d3c" />
+            <button 
+              type="button" 
+              className="modal-close" 
+              onClick={() => setShowAuthModal(false)}
+              aria-label="닫기"
+            >
+              ✕
+            </button>
+
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <div style={{ width: '44px', height: '44px', margin: '0 auto 8px', borderRadius: '50%', background: '#e3f7f1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Sparkles size={22} color="#0a4d3c" />
               </div>
-              <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0a4d3c' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0a4d3c', margin: 0 }}>
                 {authMode === 'login' ? '이화미술공작소 로그인' : '학부모 & 회원가입'}
               </h2>
-              <p style={{ fontSize: '13px', color: '#688077', marginTop: '4px' }}>
+              <p style={{ fontSize: '13px', color: '#688077', marginTop: '4px', marginBottom: 0 }}>
                 아이의 특별한 성장과 그림 변화를 확인하세요
               </p>
             </div>
 
+            {authError && (
+              <div style={{
+                background: '#fee2e2',
+                border: '1px solid #fca5a5',
+                color: '#b91c1c',
+                fontSize: '12px',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                marginBottom: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                <AlertCircle size={15} />
+                <span>{authError}</span>
+              </div>
+            )}
+
             <form onSubmit={handleFormSubmit}>
-              <div className="form-group">
-                <label className="form-label">이메일 주소</label>
+              <div className="form-group" style={{ marginBottom: '12px' }}>
+                <label className="form-label" style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#2d413b', marginBottom: '4px' }}>
+                  이메일 주소
+                </label>
                 <input
                   type="email"
                   className="form-input"
@@ -243,12 +317,31 @@ export default function Header() {
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
                   required
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1ded8', fontSize: '14px' }}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '12px' }}>
+                <label className="form-label" style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#2d413b', marginBottom: '4px' }}>
+                  비밀번호
+                </label>
+                <input
+                  type="password"
+                  className="form-input"
+                  placeholder="6자리 이상 비밀번호 입력"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  required
+                  minLength={6}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1ded8', fontSize: '14px' }}
                 />
               </div>
 
               {authMode === 'signup' && (
-                <div className="form-group">
-                  <label className="form-label">성함 / 학부모님 성함</label>
+                <div className="form-group" style={{ marginBottom: '12px' }}>
+                  <label className="form-label" style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#2d413b', marginBottom: '4px' }}>
+                    성함 / 학부모님 성함
+                  </label>
                   <input
                     type="text"
                     className="form-input"
@@ -256,24 +349,28 @@ export default function Header() {
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     required
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1ded8', fontSize: '14px' }}
                   />
                 </div>
               )}
 
-              <div className="form-group">
-                <label className="form-label">계정 권한 선택</label>
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label className="form-label" style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#2d413b', marginBottom: '6px' }}>
+                  계정 권한 선택
+                </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <button
                     type="button"
                     onClick={() => setRoleInput('parent')}
                     style={{
-                      padding: '10px',
+                      padding: '9px',
                       borderRadius: '8px',
                       border: roleInput === 'parent' ? '2px solid #0a4d3c' : '1px solid #ddd',
                       background: roleInput === 'parent' ? '#eefbf7' : '#fff',
                       color: roleInput === 'parent' ? '#0a4d3c' : '#666',
                       fontWeight: 700,
-                      fontSize: '13px'
+                      fontSize: '13px',
+                      cursor: 'pointer'
                     }}
                   >
                     🎨 학부모 계정
@@ -282,13 +379,14 @@ export default function Header() {
                     type="button"
                     onClick={() => setRoleInput('admin')}
                     style={{
-                      padding: '10px',
+                      padding: '9px',
                       borderRadius: '8px',
                       border: roleInput === 'admin' ? '2px solid #b86200' : '1px solid #ddd',
                       background: roleInput === 'admin' ? '#fff6e8' : '#fff',
                       color: roleInput === 'admin' ? '#b86200' : '#666',
                       fontWeight: 700,
-                      fontSize: '13px'
+                      fontSize: '13px',
+                      cursor: 'pointer'
                     }}
                   >
                     👑 관리자(어드민)
@@ -298,22 +396,37 @@ export default function Header() {
 
               <button
                 type="submit"
+                disabled={authLoading}
                 className="hero-btn"
-                style={{ width: '100%', justifyContent: 'center', marginTop: '12px', background: '#0a4d3c', color: '#fff' }}
+                style={{ 
+                  width: '100%', 
+                  justifyContent: 'center', 
+                  marginTop: '4px', 
+                  background: '#0a4d3c', 
+                  color: '#fff',
+                  padding: '12px',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  opacity: authLoading ? 0.7 : 1
+                }}
               >
-                {authMode === 'login' ? '로그인 완료' : '가입하기'}
+                {authLoading ? '처리 중...' : (authMode === 'login' ? '로그인 완료' : '가입하기')}
               </button>
             </form>
 
-            <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '13px', color: '#688077' }}>
+            <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: '#688077' }}>
               {authMode === 'login' ? (
-                <span>계정이 없으신가요? <button onClick={() => setAuthMode('signup')} style={{ color: '#0a4d3c', fontWeight: 700, textDecoration: 'underline' }}>회원가입</button></span>
+                <span>계정이 없으신가요? <button onClick={() => { setAuthMode('signup'); setAuthError(null); }} style={{ color: '#0a4d3c', fontWeight: 700, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>회원가입</button></span>
               ) : (
-                <span>이미 계정이 있으신가요? <button onClick={() => setAuthMode('login')} style={{ color: '#0a4d3c', fontWeight: 700, textDecoration: 'underline' }}>로그인</button></span>
+                <span>이미 계정이 있으신가요? <button onClick={() => { setAuthMode('login'); setAuthError(null); }} style={{ color: '#0a4d3c', fontWeight: 700, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>로그인</button></span>
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

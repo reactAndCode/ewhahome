@@ -7,6 +7,9 @@ import {
   getStoredHeroData, 
   getStoredCards, 
   getCurrentUser, 
+  fetchHeroData,
+  fetchCards,
+  syncCurrentAuthUser,
   MainHeroData, 
   BeforeAfterCardData, 
   AuthUser,
@@ -68,9 +71,15 @@ export default function BlogHomePage() {
   const [activeModalInfo, setActiveModalInfo] = useState<{ title: string; content: string } | null>(null);
 
   useEffect(() => {
+    // 1) 빠른 초기 렌더링을 위해 로컬 캐시 우선 반영
     setHeroData(getStoredHeroData());
     setCards(getStoredCards());
     setCurrentUser(getCurrentUser());
+
+    // 2) Supabase 최신 데이터 및 Auth 세션 비동기 동기화
+    fetchHeroData().then(data => setHeroData(data));
+    fetchCards().then(data => setCards(data));
+    syncCurrentAuthUser().then(user => setCurrentUser(user));
 
     const handleStorageChange = () => {
       setHeroData(getStoredHeroData());
