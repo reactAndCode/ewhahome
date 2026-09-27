@@ -368,4 +368,177 @@ GitHub 저장소 관리자 페이지에서 단 1번만 설정을 확인/변경�
    - **활동 사진 등록 폼**: 대상 학부모 ID, 원생명, 작품 제목, 수업 일자, 수업 영역(태그), 사진 업로드(Supabase Storage 버킷 `blog-images` 자동 업로드), 선생님 피드백 코멘트 입력.
    - **활동 사진 관리 리스트**: 등록된 사진 썸네일, 학부모 ID/원생명, 코멘트 실시간 확인 및 불필요한 사진 `삭제(deleteKidPhoto)` 기능 탑재.
 
+---
+
+## 10. [2026-09-28] 연령별 수업 섹션 3-Zone 리디자인 및 어드민 편집 기능 추가
+
+### 10.1 개요
+
+기존 단순 카드 그리드(`age-cards-grid`) 형태의 연령별 수업 섹션을 **3존(Zone) 풀 레이아웃**으로 완전 재구성하였습니다.  
+각 Zone 항목 클릭 시 새 창(`target="_blank"`) 링크 이동을 지원하며, 어드민 대시보드에서 콘텐츠 전체를 코딩 없이 수정·저장할 수 있습니다.
+
+---
+
+### 10.2 신규 데이터 모델 ([`blog/lib/store.ts`](file:///c:/work/mydev/ewhahome/blog/lib/store.ts))
+
+#### `AgeBlogCard` — Zone 2 블로그 카드 단일 항목
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| `id` | `string` | 고유 식별자 |
+| `image` | `string` | 수업 대표 이미지 URL |
+| `title` | `string` | 카드 제목 |
+| `date` | `string` | 날짜 문자열 (예: `'2026.09'`) |
+| `excerpt` | `string` | 2~3줄 미리보기 텍스트 |
+| `tag` | `string` | 카테고리 배지 텍스트 |
+| `linkUrl?` | `string` | 클릭 시 새 창으로 이동할 URL (비워두면 링크 없음) |
+
+#### `AgeBulletItem` — Zone 3 불릿 목록 단일 항목
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| `id` | `string` | 고유 식별자 |
+| `kidPhoto` | `string` | 원형 아이 사진 URL |
+| `headline` | `string` | 짧은 제목 (따옴표 스타일 권장) |
+| `desc` | `string` | 2~3줄 설명 |
+| `linkUrl?` | `string` | 클릭 시 새 창으로 이동할 URL (비워두면 링크 없음) |
+
+#### `AgeProgramData` — 연령 탭 전체 데이터
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| `id` | `number` | 연령 탭 순서 (1~5) |
+| `icon` | `string` | 탭 이모지 아이콘 |
+| `title` | `string` | 탭 제목 (예: `'초등 1·2학년'`) |
+| `sub` | `string` | 탭 부제목 |
+| `detail` | `string` | 상세 설명 (Zone 3 헤더 표시) |
+| `color` | `string` | 탭 포인트 컬러 (HEX) |
+| `blogCards` | `AgeBlogCard[]` | Zone 2 블로그 카드 목록 (기본 2개) |
+| `bulletItems` | `AgeBulletItem[]` | Zone 3 불릿 목록 (기본 3개) |
+
+#### LocalStorage CRUD 함수 추가
+```typescript
+getStoredAgePrograms(): AgeProgramData[]          // localStorage 'ewha_age_programs' 로드
+saveAgePrograms(programs: AgeProgramData[]): void  // localStorage 저장
+```
+
+#### 기본값 (`DEFAULT_AGE_PROGRAMS`)
+5개 연령 탭 전체의 초기 데이터가 하드코딩되어 있으며, 어드민 `기본값 복원` 버튼으로 언제든 초기화 가능합니다.
+
+| 탭 | 아이콘 | 탭 포인트 컬러 |
+|---|---|---|
+| 6·7세 유아미술 | 🌱 | `#f59e0b` (황금) |
+| 초등 1·2학년 | 📖 | `#10b981` (에메랄드) |
+| 초등 3·4학년 | 👁️ | `#0a4d3c` (딥그린) |
+| 초등 5·6학년 | 🎨 | `#7c3aed` (바이올렛) |
+| 중등 미술 | 🖼️ | `#dc2626` (레드) |
+
+---
+
+### 10.3 블로그 홈 — 연령별 수업 3-Zone 레이아웃 ([`blog/app/page.tsx`](file:///c:/work/mydev/ewhahome/blog/app/page.tsx))
+
+기존 단순 5개 카드 그리드를 **3개 Zone**으로 완전 재구성합니다.
+
+#### Zone 1 — 연령 탭 바 (상단)
+- **5개 탭 버튼**: 아이콘 + 제목 + 부제 3줄 구성, `border-radius: 16px 16px 0 0` 라운드 상단 탭 형태.
+- **활성 탭**: 딥그린(`#0a4d3c`) 배경 + 흰 텍스트 + 하단 포인트 컬러 바 (`::after` 슬라이드 효과).
+- **호버**: `translateY(-2px)` 부유 + 민트 배경 전환.
+- **성장 타임라인 진행 바**: 탭 전체 너비에 걸친 3px 선 — 현재 선택 탭 위치까지 민트 그라데이션(`#25b89a → #0a4d3c`)으로 채워짐.
+- **탭 전환 애니메이션**: `fadeOut(220ms) → 데이터 변경 → fadeIn` 순서로 콘텐츠 부드럽게 전환.
+
+#### Zone 2 — 블로그 이미지 카드 (좌측, 2개 세로 스택)
+- **카드 스타일**: `border-radius: 20px`, 흰 배경, 프리미엄 `box-shadow`.
+- **이미지 영역** (`height: 180px`): 호버 시 이미지 `scale(1.04)` 줌.
+- **연령 배지**: 이미지 좌상단, 탭 포인트 컬러 배경 알약형.
+- **날짜 스탬프**: 이미지 우상단, 딥그린 반투명 칩.
+- **카드 호버**: `translateY(-6px)` + 깊어지는 그림자.
+- **카드 진입 애니메이션**: `cardFadeInUp` (0.35s, stagger 0.08s 간격).
+- **링크 처리**: `linkUrl` 값이 있으면 `window.open(url, '_blank', 'noopener,noreferrer')` 새 창 열기 + `ExternalLink` 아이콘 표시. 비어있으면 `수업 보기 →` 텍스트만 표시.
+
+#### Zone 3 — 불릿 수업 목록 (우측 패널)
+- **패널 헤더**: 딥그린 배경 + 연령 아이콘 + 탭 제목 + 상세 설명.
+- **불릿 아이템**: 원형 아이 사진 (`52×52px`, `border: 3px solid #6ce0c6` 민트 링) + 제목 + 설명 2줄.
+- **구분선**: `border-bottom: 1px dashed #c8e0d6` (스크랩북 점선 감성).
+- **호버**: 배경 민트 전환 + 원형 사진 링 딥그린 변경 + `scale(1.08)`.
+- **링크 처리**: `linkUrl` 있으면 `cursor: pointer` + `ExternalLink` 아이콘 노출. 없으면 비클릭 스타일.
+
+#### 추가된 상태 및 함수
+```typescript
+const [activeAgeTab, setActiveAgeTab] = useState<number>(1);       // 선택된 탭 ID (기본 1번)
+const [contentVisible, setContentVisible] = useState(true);        // fadeIn/Out 트리거
+const [agePrograms, setAgePrograms] = useState<AgeProgramData[]>(DEFAULT_AGE_PROGRAMS);
+
+// 탭 전환: fadeOut → 데이터 변경 → fadeIn
+const handleTabChange = useCallback((id: number) => {
+  setContentVisible(false);
+  setTimeout(() => { setActiveAgeTab(id); setContentVisible(true); }, 220);
+}, [activeAgeTab]);
+```
+- `useEffect`에서 `getStoredAgePrograms()` 로드 추가.
+- `window.addEventListener('storage', ...)` 구독 → 어드민 저장 즉시 홈에 실시간 반영.
+
+---
+
+### 10.4 어드민 대시보드 — 3번 탭 연령별 수업 편집 ([`blog/app/admin/page.tsx`](file:///c:/work/mydev/ewhahome/blog/app/admin/page.tsx))
+
+#### 대메뉴 탭 구성 변경 (2탭 → 3탭)
+| 탭 번호 | 탭 명칭 | 기능 |
+|---|---|---|
+| 1 | 메인 배너 & 성장 카드 4종 설정 | Before/After 히어로 배너 및 하단 4개 카드 편집 |
+| 2 | 학부모 내아이 활동 사진 등록/관리 | 활동 사진 CRUD (원장님 전용) |
+| **3 (신규)** | **연령별 수업 구성 편집** | 5개 연령 탭 콘텐츠 전체 편집 |
+
+#### 3번 탭 편집 패널 세부 구성
+1. **연령 탭 선택기**: 5개 연령 버튼 (선택 시 딥그린 강조), `activeAgeEditTab` 상태로 관리.
+2. **탭 기본 정보 편집**: 아이콘(이모지), 탭 제목, 부제목, 상세 설명 4개 필드.
+3. **블로그 카드 2개 편집** (Zone 2):
+   - 이미지 URL 직접 입력 또는 파일 업로드 버튼 (Supabase Storage `age_programs` 폴더 업로드, 실패 시 Base64 Fallback).
+   - 100px 높이 미리보기 썸네일.
+   - 카드 제목, 날짜, 태그, 미리보기 텍스트(textarea) 필드.
+   - 🔗 **클릭 링크 URL 입력** (`type="url"` — 비워두면 링크 없음).
+4. **불릿 항목 3개 편집** (Zone 3):
+   - 원형 아이 사진 URL 입력 또는 파일 업로드 (60px 원형 미리보기).
+   - 제목(headline), 설명(desc) 필드.
+   - 🔗 **클릭 링크 URL 입력** (비워두면 링크 없음).
+5. **저장 버튼**:
+   - `기본값 복원` — `DEFAULT_AGE_PROGRAMS`으로 초기화 후 즉시 저장.
+   - `연령별 수업 저장하기` — `saveAgePrograms()` 호출 + `window.dispatchEvent(new Event('storage'))` 발행 → 블로그 홈 즉시 반영 + 성공 토스트 표시.
+
+#### 추가된 헬퍼 함수
+```typescript
+updateAgeProgramField(progId, field, value)       // 탭 기본 정보 필드 수정
+updateAgeBlogCard(progId, cardIdx, field, value)  // 블로그 카드 필드 수정
+updateAgeBullet(progId, bulletIdx, field, value)  // 불릿 항목 필드 수정
+handleSaveAgePrograms()                           // localStorage 저장 + storage 이벤트 발행
+handleAgeImageUpload(e, callback)                 // 이미지 업로드 (Supabase → Base64 Fallback)
+```
+
+---
+
+### 10.5 CSS 스타일 추가 ([`blog/css/blog.css`](file:///c:/work/mydev/ewhahome/blog/css/blog.css))
+
+약 400라인의 신규 스타일 블록 추가 (`/* 연령별 수업 3-Zone 리디자인 CSS */` 섹션):
+
+| 클래스 그룹 | 주요 클래스 | 설명 |
+|---|---|---|
+| 섹션 헤더 | `.age-section-header`, `.age-section-caption` | 제목+캡션 레이아웃 |
+| Zone 1 탭 | `.age-tabs-wrap`, `.age-tab-btn`, `.age-tab-btn.active` | 탭 버튼 스타일 (`::after` 포인트 바 포함) |
+| 탭 내부 요소 | `.age-tab-icon`, `.age-tab-title`, `.age-tab-sub` | 아이콘/제목/부제 텍스트 |
+| 진행 바 | `.age-progress-bar`, `.age-progress-fill` | 성장 타임라인, `width` 트랜지션 0.4s |
+| Zone 2+3 래퍼 | `.age-content-wrap` | 2열 그리드 (`1fr 1fr`) |
+| Zone 2 카드 | `.age-blog-card`, `.age-blog-card-img-wrap`, `.age-blog-badge`, `.age-blog-date` | 블로그 카드 및 이미지 오버레이 |
+| Zone 2 카드 본문 | `.age-blog-tag`, `.age-blog-title`, `.age-blog-excerpt`, `.age-blog-more` | 카드 텍스트 요소 |
+| Zone 3 패널 | `.age-bullet-panel`, `.age-bullet-header` | 불릿 패널 컨테이너/헤더 |
+| Zone 3 항목 | `.age-bullet-item`, `.age-bullet-photo-wrap`, `.age-bullet-headline`, `.age-bullet-desc` | 불릿 아이템 및 원형 사진 |
+| 애니메이션 | `@keyframes cardFadeInUp` | 카드/불릿 등장 애니메이션 (0.3~0.35s) |
+| 반응형 | `@media (max-width: 900px)`, `@media (max-width: 640px)` | Zone2+3 1열 전환, 탭 가로 스크롤 |
+
+---
+
+### 10.6 수정된 파일 요약
+
+| 파일 | 변경 유형 | 내용 |
+|---|---|---|
+| [`blog/lib/store.ts`](file:///c:/work/mydev/ewhahome/blog/lib/store.ts) | 추가 | `AgeBlogCard`, `AgeBulletItem`, `AgeProgramData` 인터페이스; `DEFAULT_AGE_PROGRAMS` 기본값; `getStoredAgePrograms`, `saveAgePrograms` 함수 |
+| [`blog/app/page.tsx`](file:///c:/work/mydev/ewhahome/blog/app/page.tsx) | 변경 | 연령별 수업 섹션 완전 재구성; 3존 상태 관리(`activeAgeTab`, `contentVisible`, `agePrograms`) 추가; `handleTabChange` 콜백; `useEffect` agePrograms 로드 및 storage 이벤트 구독 |
+| [`blog/app/admin/page.tsx`](file:///c:/work/mydev/ewhahome/blog/app/admin/page.tsx) | 변경 | 어드민 탭 2종 → 3종 확장; agePrograms 상태 4종 추가; 헬퍼 함수 5개 추가; 3번 탭 편집 패널 전체 JSX 추가 |
+| [`blog/css/blog.css`](file:///c:/work/mydev/ewhahome/blog/css/blog.css) | 추가 | 3-Zone 전체 CSS 스타일 (~400라인); `cardFadeInUp` 키프레임; 반응형 미디어 쿼리 2개 |
+
 

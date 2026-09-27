@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import BlogMainHero from '../components/BlogMainHero';
 import BeforeAfterGrid from '../components/BeforeAfterGrid';
 import { 
@@ -10,25 +10,19 @@ import {
   fetchHeroData,
   fetchCards,
   syncCurrentAuthUser,
+  getStoredAgePrograms,
   MainHeroData, 
   BeforeAfterCardData, 
   AuthUser,
+  AgeProgramData,
   getAssetUrl,
   DEFAULT_HERO_DATA,
-  DEFAULT_CARDS 
+  DEFAULT_CARDS,
+  DEFAULT_AGE_PROGRAMS
 } from '../lib/store';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
-
-// 연령별 수업 데이터 (시안 1:1)
-const AGE_PROGRAMS = [
-  { id: 1, title: '6·7세 유아미술', sub: '놀이로 만나는 첫 미술', detail: '재료와 친해지고 오감을 자극하는 다양한 매체 탐색 및 표현의 첫걸음' },
-  { id: 2, title: '초등 1·2학년', sub: '독서미술과 그림일기', detail: '이야기를 시각화하고 관찰을 통해 형태를 자연스럽게 담아내는 표현 훈련' },
-  { id: 3, title: '초등 3·4학년', sub: '관찰하고 표현하는 힘', detail: '사물의 비례와 원근, 인체 동작을 스스로 관찰하여 자기만의 화풍으로 완성' },
-  { id: 4, title: '초등 5·6학년', sub: '기초디자인으로 넓어지는 시야', detail: '명암과 입체감, 정교한 화면 구성을 통해 완성도 높은 포트폴리오 구축' },
-  { id: 5, title: '중등 미술', sub: '더 깊은 탐구와 표현', detail: '소묘, 디자인, 융합미술을 바탕으로 깊이 있는 조형 감각과 창의적 시각 탐구' },
-];
+import { ArrowRight, Sparkles, ExternalLink } from 'lucide-react';
 
 // 수업별 자료실 데이터 (시안 1:1)
 const SUBJECT_ARCHIVES = [
@@ -64,17 +58,30 @@ export default function BlogHomePage() {
   const [heroData, setHeroData] = useState<MainHeroData>(DEFAULT_HERO_DATA);
   const [cards, setCards] = useState<BeforeAfterCardData[]>(DEFAULT_CARDS);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [agePrograms, setAgePrograms] = useState<AgeProgramData[]>(DEFAULT_AGE_PROGRAMS);
 
   // 시안 인터랙션 상태
-  const [selectedAge, setSelectedAge] = useState<number | null>(null);
+  const [activeAgeTab, setActiveAgeTab] = useState<number>(1);  // 연령별 탭 현재 선택 (1번 기본)
+  const [contentVisible, setContentVisible] = useState(true);  // 애니메이션 트리거
   const [selectedSubject, setSelectedSubject] = useState<number | null>(null);
   const [activeModalInfo, setActiveModalInfo] = useState<{ title: string; content: string } | null>(null);
 
+  // 탭 전환 핸들러 — 콘텐츠 fadeOut → 데이터 업데이트 → fadeIn
+  const handleTabChange = useCallback((id: number) => {
+    if (id === activeAgeTab) return;
+    setContentVisible(false);
+    setTimeout(() => {
+      setActiveAgeTab(id);
+      setContentVisible(true);
+    }, 220);
+  }, [activeAgeTab]);
+
   useEffect(() => {
-    // 1) 빠른 초기 렌더링을 위해 로컬 캐시 우선 반영
+    // 1) 빠른 초기 렌더링을 위해 로컀 캐시 우선 반영
     setHeroData(getStoredHeroData());
     setCards(getStoredCards());
     setCurrentUser(getCurrentUser());
+    setAgePrograms(getStoredAgePrograms());
 
     // 2) Supabase 최신 데이터 및 Auth 세션 비동기 동기화
     fetchHeroData().then(data => setHeroData(data));
@@ -85,6 +92,7 @@ export default function BlogHomePage() {
       setHeroData(getStoredHeroData());
       setCards(getStoredCards());
       setCurrentUser(getCurrentUser());
+      setAgePrograms(getStoredAgePrograms());
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -107,27 +115,128 @@ export default function BlogHomePage() {
       <section className="sub-sections-wrap">
         <div className="container">
 
-          {/* 3. 헤더 메뉴 2: 연령별 수업 */}
+          {/* 3. 헤더 메뉴 2: 연령별 수업 — 3-Zone 리디자인 */}
           <div id="programs" style={{ scrollMarginTop: '100px' }}>
-            <h2 className="sub-section-title">연령별 수업</h2>
-            <div className="age-cards-grid">
-              {AGE_PROGRAMS.map((item) => (
-                <div 
-                  key={item.id} 
-                  className={`age-card ${selectedAge === item.id ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedAge(item.id);
-                    setActiveModalInfo({
-                      title: `[연령별 수업] ${item.title}`,
-                      content: `${item.sub} — ${item.detail}`
-                    });
-                  }}
-                >
-                  <div className="age-card-title">{item.title}</div>
-                  <div className="age-card-sub">{item.sub}</div>
-                </div>
-              ))}
+            <div className="age-section-header">
+              <h2 className="sub-section-title" style={{ marginBottom: 0 }}>연령별 수업</h2>
+              <p className="age-section-caption">성장 단계마다, 딱 맞는 미술 이야기</p>
             </div>
+
+            {/* Zone 1: 연령 탭 */}
+            <div className="age-tabs-wrap">
+              {agePrograms.map((prog, idx) => (
+                <button
+                  key={prog.id}
+                  className={`age-tab-btn ${activeAgeTab === prog.id ? 'active' : ''}`}
+                  style={{ '--tab-color': prog.color } as React.CSSProperties}
+                  onClick={() => handleTabChange(prog.id)}
+                  id={`age-tab-${prog.id}`}
+                >
+                  <span className="age-tab-icon">{prog.icon}</span>
+                  <span className="age-tab-title">{prog.title}</span>
+                  <span className="age-tab-sub">{prog.sub}</span>
+                </button>
+              ))}
+              {/* 성장 타임라인 바 */}
+              <div className="age-progress-bar">
+                <div
+                  className="age-progress-fill"
+                  style={{ width: `${(activeAgeTab / agePrograms.length) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Zone 2 + Zone 3: 콘텐츠 영역 */}
+            {(() => {
+              const prog = agePrograms.find(p => p.id === activeAgeTab) || agePrograms[0];
+              if (!prog) return null;
+              return (
+                <div
+                  className="age-content-wrap"
+                  style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.22s ease' }}
+                >
+                  {/* Zone 2: 블로그 이미지 카드 2개 */}
+                  <div className="age-blog-cards">
+                    {prog.blogCards.map((card, ci) => (
+                      <div
+                        key={card.id}
+                        className="age-blog-card"
+                        style={{ animationDelay: `${ci * 0.08}s` }}
+                        onClick={() => {
+                          if (card.linkUrl) {
+                            window.open(card.linkUrl, '_blank', 'noopener,noreferrer');
+                          }
+                        }}
+                      >
+                        <div className="age-blog-card-img-wrap">
+                          <Image
+                            src={getAssetUrl(card.image)}
+                            alt={card.title}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                          />
+                          {/* 연령 배지 */}
+                          <span className="age-blog-badge" style={{ background: prog.color }}>{prog.title}</span>
+                          {/* 날짜 스탬프 */}
+                          <span className="age-blog-date">{card.date}</span>
+                        </div>
+                        <div className="age-blog-card-body">
+                          <span className="age-blog-tag">{card.tag}</span>
+                          <h3 className="age-blog-title">{card.title}</h3>
+                          <p className="age-blog-excerpt">{card.excerpt}</p>
+                          {card.linkUrl ? (
+                            <span className="age-blog-more">자세히 보기 <ExternalLink size={12} style={{ display: 'inline', verticalAlign: 'middle' }} /></span>
+                          ) : (
+                            <span className="age-blog-more">수업 보기 →</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Zone 3: 불릿 수업 내역 목록 */}
+                  <div className="age-bullet-panel">
+                    <div className="age-bullet-header">
+                      <span className="age-bullet-icon">{prog.icon}</span>
+                      <div>
+                        <div className="age-bullet-panel-title">{prog.title} 수업에서 배우는 것들</div>
+                        <div className="age-bullet-panel-sub">{prog.detail}</div>
+                      </div>
+                    </div>
+                    <div className="age-bullet-list">
+                      {prog.bulletItems.map((item, bi) => (
+                        <div
+                          key={item.id}
+                          className={`age-bullet-item ${item.linkUrl ? 'clickable' : ''}`}
+                          style={{ animationDelay: `${bi * 0.1}s` }}
+                          onClick={() => {
+                            if (item.linkUrl) {
+                              window.open(item.linkUrl, '_blank', 'noopener,noreferrer');
+                            }
+                          }}
+                        >
+                          <div className="age-bullet-photo-wrap">
+                            <Image
+                              src={getAssetUrl(item.kidPhoto)}
+                              alt={item.headline}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                            />
+                          </div>
+                          <div className="age-bullet-text">
+                            <div className="age-bullet-headline">{item.headline}</div>
+                            <div className="age-bullet-desc">{item.desc}</div>
+                          </div>
+                          {item.linkUrl && (
+                            <ExternalLink size={14} className="age-bullet-ext-icon" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* 4. 헤더 메뉴 3: 수업별 자료실 */}

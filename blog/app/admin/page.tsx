@@ -18,12 +18,18 @@ import {
   fetchKidPhotos,
   createKidPhoto,
   deleteKidPhoto,
+  getStoredAgePrograms,
+  saveAgePrograms,
   KidActivityPhoto,
   MainHeroData, 
   BeforeAfterCardData,
+  AgeProgramData,
+  AgeBlogCard,
+  AgeBulletItem,
   AuthUser,
   DEFAULT_HERO_DATA,
-  DEFAULT_CARDS
+  DEFAULT_CARDS,
+  DEFAULT_AGE_PROGRAMS
 } from '../../lib/store';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { 
@@ -60,13 +66,13 @@ const PRESET_IMAGES = [
 export default function AdminPage() {
   const [user, setUser] = useState<AuthUser | null>({
     id: 'admin_master',
-    email: 'admin@ewha-art.com',
+    email: 'admin@ewhaart.co.kr',
     name: '총괄 원장선생님',
     role: 'admin'
   });
 
-  // 어드민 대메뉴 탭 ('blog_settings' | 'kid_photos')
-  const [adminTab, setAdminTab] = useState<'blog_settings' | 'kid_photos'>('blog_settings');
+  // 어드민 대메뉴 탭 ('blog_settings' | 'kid_photos' | 'age_programs')
+  const [adminTab, setAdminTab] = useState<'blog_settings' | 'kid_photos' | 'age_programs'>('blog_settings');
 
   // 블로그 메인 & 카드 상태
   const [heroData, setHeroData] = useState<MainHeroData>(DEFAULT_HERO_DATA);
@@ -88,6 +94,12 @@ export default function AdminPage() {
   const [kidPhotoSuccess, setKidPhotoSuccess] = useState(false);
   const [kidPhotoUploading, setKidPhotoUploading] = useState(false);
 
+  // 연령별 수업 편집 상태
+  const [agePrograms, setAgePrograms] = useState<AgeProgramData[]>(DEFAULT_AGE_PROGRAMS);
+  const [activeAgeEditTab, setActiveAgeEditTab] = useState<number>(1);
+  const [ageSaveSuccess, setAgeSaveSuccess] = useState(false);
+  const [ageUploading, setAgeUploading] = useState(false);
+
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (currentUser) {
@@ -96,6 +108,7 @@ export default function AdminPage() {
     // 1) 캐시 로드
     setHeroData(getStoredHeroData());
     setCards(getStoredCards());
+    setAgePrograms(getStoredAgePrograms());
 
     // 2) Supabase 최신 데이터 로드
     fetchHeroData().then(data => setHeroData(data));
@@ -243,6 +256,54 @@ export default function AdminPage() {
     }
   };
 
+  // 연령별 수업 필드 업데이트 헬퍼으
+  const updateAgeBlogCard = (progId: number, cardIdx: number, field: keyof AgeBlogCard, value: string) => {
+    setAgePrograms(prev => prev.map(p => {
+      if (p.id !== progId) return p;
+      const newCards = p.blogCards.map((c, i) => i === cardIdx ? { ...c, [field]: value } : c);
+      return { ...p, blogCards: newCards };
+    }));
+  };
+
+  const updateAgeBullet = (progId: number, bulletIdx: number, field: keyof AgeBulletItem, value: string) => {
+    setAgePrograms(prev => prev.map(p => {
+      if (p.id !== progId) return p;
+      const newItems = p.bulletItems.map((b, i) => i === bulletIdx ? { ...b, [field]: value } : b);
+      return { ...p, bulletItems: newItems };
+    }));
+  };
+
+  const updateAgeProgramField = (progId: number, field: 'title' | 'sub' | 'detail' | 'icon', value: string) => {
+    setAgePrograms(prev => prev.map(p => p.id === progId ? { ...p, [field]: value } : p));
+  };
+
+  const handleSaveAgePrograms = () => {
+    saveAgePrograms(agePrograms);
+    // localStorage 이벤트로 블로그 홈에 실시간 반영
+    window.dispatchEvent(new Event('storage'));
+    setAgeSaveSuccess(true);
+    setTimeout(() => setAgeSaveSuccess(false), 3500);
+  };
+
+  // 연령별 수업 이미지 업로드
+  const handleAgeImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    callback: (url: string) => void
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAgeUploading(true);
+    try {
+      const url = await uploadImageToSupabase(file, 'age_programs');
+      if (url) { callback(url); return; }
+      const reader = new FileReader();
+      reader.onload = ev => { if (ev.target?.result) callback(ev.target.result as string); };
+      reader.readAsDataURL(file);
+    } finally {
+      setAgeUploading(false);
+    }
+  };
+
   const currentEditCard = cards.find(c => c.id === activeCardTab) || cards[0];
 
   const updateCardField = (field: keyof BeforeAfterCardData, value: string) => {
@@ -363,6 +424,26 @@ export default function AdminPage() {
               {kidPhotos.length}
             </span>
           </button>
+          <button
+            onClick={() => setAdminTab('age_programs')}
+            style={{
+              padding: '12px 24px',
+              fontSize: '15px',
+              fontWeight: 800,
+              borderRadius: '10px 10px 0 0',
+              border: 'none',
+              background: adminTab === 'age_programs' ? '#0a4d3c' : '#eaf2ee',
+              color: adminTab === 'age_programs' ? '#ffffff' : '#496057',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s'
+            }}
+          >
+            <Tag size={16} />
+            <span>3. 연령별 수업 구성 편집</span>
+          </button>
         </div>
 
         {/* 저장 완료 알림 토스트 */}
@@ -415,10 +496,13 @@ export default function AdminPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">설명 문구 (Description)</label>
+                <label className="form-label">
+                  설명 문구 (Description) <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 'normal' }}>(엔터키를 눌러 바로 줄바꿈하거나 &lt;br&gt; 입력 가능)</span>
+                </label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   className="form-textarea"
+                  placeholder="메인 히어로 설명 문구를 입력하세요. (엔터로 줄바꿈 가능)"
                   value={heroData.description}
                   onChange={(e) => setHeroData({ ...heroData, description: e.target.value })}
                 />
@@ -852,6 +936,224 @@ export default function AdminPage() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            탭 3: 연령별 수업 구성 편집
+            ========================================================================= */}
+        {adminTab === 'age_programs' && (
+          <div>
+            {ageSaveSuccess && (
+              <div style={{ background: '#d1f4e9', border: '1px solid #7ed8bf', color: '#064d3c', padding: '14px 20px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 700 }}>
+                <CheckCircle2 size={20} color="#0a4d3c" />
+                <span>연령별 수업 구성이 저장되었습니다! 블로그 홈에 즉시 반영됩니다.</span>
+              </div>
+            )}
+
+            <div className="admin-card">
+              <div className="admin-card-title">
+                <Tag size={20} color="#0a4d3c" />
+                <span>연령별 수업 구성 편집 (탭·블로그카드·불릿 항목)</span>
+              </div>
+              <p style={{ fontSize: '13px', color: '#688077', marginTop: '-8px', marginBottom: '20px' }}>
+                각 연령 탭의 기본 정보, 블로그 카드 2개, 불릿 수업 목록 3개를 편집하고 저장하세요.
+                <br /><strong>링크 URL</strong>을 입력하면 클릭 시 새 창으로 이동합니다. 비워두면 링크 없음입니다.
+              </p>
+
+              {/* 연령 탭 선택기 */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                {agePrograms.map(prog => (
+                  <button
+                    key={prog.id}
+                    onClick={() => setActiveAgeEditTab(prog.id)}
+                    style={{
+                      padding: '10px 20px',
+                      borderRadius: '10px',
+                      border: activeAgeEditTab === prog.id ? '2px solid #0a4d3c' : '1px solid #d5e9e0',
+                      background: activeAgeEditTab === prog.id ? '#0a4d3c' : '#f7fbf9',
+                      color: activeAgeEditTab === prog.id ? '#fff' : '#3a5c4f',
+                      fontWeight: 800, cursor: 'pointer', fontSize: '13px',
+                      display: 'flex', alignItems: 'center', gap: '6px'
+                    }}
+                  >
+                    <span>{prog.icon}</span>
+                    <span>{prog.title}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* 선택된 연령 편집 폼 */}
+              {agePrograms.filter(p => p.id === activeAgeEditTab).map(prog => (
+                <div key={prog.id}>
+                  {/* 기본 정보 */}
+                  <div style={{ background: '#f0f9f5', border: '1px solid #c8e8d8', borderRadius: '14px', padding: '20px', marginBottom: '24px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#0a4d3c', marginBottom: '12px' }}>📌 탭 기본 정보</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr 2fr', gap: '12px' }}>
+                      <div className="form-group">
+                        <label className="form-label">아이콘</label>
+                        <input type="text" className="form-input" value={prog.icon}
+                          onChange={e => updateAgeProgramField(prog.id, 'icon', e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">탭 제목</label>
+                        <input type="text" className="form-input" value={prog.title}
+                          onChange={e => updateAgeProgramField(prog.id, 'title', e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">부제목</label>
+                        <input type="text" className="form-input" value={prog.sub}
+                          onChange={e => updateAgeProgramField(prog.id, 'sub', e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">상세 설명</label>
+                        <input type="text" className="form-input" value={prog.detail}
+                          onChange={e => updateAgeProgramField(prog.id, 'detail', e.target.value)} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 블로그 카드 2개 */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#0a4d3c', marginBottom: '14px' }}>
+                      📸 블로그 이미지 카드 (2개) — Zone 2 좌측
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                      {prog.blogCards.map((card, ci) => (
+                        <div key={card.id} style={{ background: '#fdfefe', border: '1px solid #e2ebe6', borderRadius: '14px', padding: '18px' }}>
+                          <div style={{ fontSize: '12px', fontWeight: 800, color: '#496057', marginBottom: '10px' }}>카드 {ci + 1}</div>
+                          <div className="form-group">
+                            <label className="form-label">이미지 URL / 업로드</label>
+                            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                              <input type="text" className="form-input" value={card.image}
+                                onChange={e => updateAgeBlogCard(prog.id, ci, 'image', e.target.value)} />
+                              <label className="nav-btn nav-btn-outline" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                                <Upload size={13} /><span>{ageUploading ? '업로드 중' : '선택'}</span>
+                                <input type="file" accept="image/*" style={{ display: 'none' }}
+                                  onChange={e => handleAgeImageUpload(e, url => updateAgeBlogCard(prog.id, ci, 'image', url))} />
+                              </label>
+                            </div>
+                            {card.image && (
+                              <div style={{ position: 'relative', height: '100px', borderRadius: '8px', overflow: 'hidden', background: '#eee' }}>
+                                <Image src={card.image} alt="preview" fill style={{ objectFit: 'cover' }} />
+                              </div>
+                            )}
+                          </div>
+                          <div className="form-group">
+                            <label className="form-label">카드 제목</label>
+                            <input type="text" className="form-input" value={card.title}
+                              onChange={e => updateAgeBlogCard(prog.id, ci, 'title', e.target.value)} />
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                            <div className="form-group">
+                              <label className="form-label">날짜</label>
+                              <input type="text" className="form-input" value={card.date}
+                                onChange={e => updateAgeBlogCard(prog.id, ci, 'date', e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                              <label className="form-label">태그</label>
+                              <input type="text" className="form-input" value={card.tag}
+                                onChange={e => updateAgeBlogCard(prog.id, ci, 'tag', e.target.value)} />
+                            </div>
+                          </div>
+                          <div className="form-group">
+                            <label className="form-label">미리보기 텍스트</label>
+                            <textarea rows={2} className="form-textarea" value={card.excerpt}
+                              onChange={e => updateAgeBlogCard(prog.id, ci, 'excerpt', e.target.value)} />
+                          </div>
+                          <div className="form-group">
+                            <label className="form-label" style={{ color: '#7c3aed', fontWeight: 800 }}>
+                              🔗 클릭 링크 URL (새 창, 비워두면 없음)
+                            </label>
+                            <input type="url" className="form-input" placeholder="https://..."
+                              value={card.linkUrl || ''}
+                              onChange={e => updateAgeBlogCard(prog.id, ci, 'linkUrl', e.target.value)} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 불릿 항목 3개 */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#0a4d3c', marginBottom: '14px' }}>
+                      🖍️ 불릿 수업 목록 (3개) — Zone 3 우측 패널
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {prog.bulletItems.map((bullet, bi) => (
+                        <div key={bullet.id} style={{ background: '#fdfefe', border: '1px solid #e2ebe6', borderRadius: '14px', padding: '18px', display: 'grid', gridTemplateColumns: '160px 1fr', gap: '16px', alignItems: 'start' }}>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 800, color: '#496057', marginBottom: '10px' }}>불릿 {bi + 1} 원형 사진</div>
+                            <div className="form-group">
+                              <label className="form-label">사진 URL / 업로드</label>
+                              <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+                                <input type="text" className="form-input" value={bullet.kidPhoto}
+                                  onChange={e => updateAgeBullet(prog.id, bi, 'kidPhoto', e.target.value)} />
+                                <label className="nav-btn nav-btn-outline" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                                  <Upload size={13} /><span>선택</span>
+                                  <input type="file" accept="image/*" style={{ display: 'none' }}
+                                    onChange={e => handleAgeImageUpload(e, url => updateAgeBullet(prog.id, bi, 'kidPhoto', url))} />
+                                </label>
+                              </div>
+                              {bullet.kidPhoto && (
+                                <div style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '50%', overflow: 'hidden', background: '#eee', border: '3px solid #6ce0c6' }}>
+                                  <Image src={bullet.kidPhoto} alt="kid" fill style={{ objectFit: 'cover' }} />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="form-group">
+                              <label className="form-label">제목</label>
+                              <input type="text" className="form-input" value={bullet.headline}
+                                onChange={e => updateAgeBullet(prog.id, bi, 'headline', e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                              <label className="form-label">설명</label>
+                              <textarea rows={2} className="form-textarea" value={bullet.desc}
+                                onChange={e => updateAgeBullet(prog.id, bi, 'desc', e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                              <label className="form-label" style={{ color: '#7c3aed', fontWeight: 800 }}>
+                                🔗 클릭 링크 URL (새 창, 비워두면 없음)
+                              </label>
+                              <input type="url" className="form-input" placeholder="https://..."
+                                value={bullet.linkUrl || ''}
+                                onChange={e => updateAgeBullet(prog.id, bi, 'linkUrl', e.target.value)} />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* 저장 버튼 */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px', paddingTop: '20px', borderTop: '1px solid #e1ebe7' }}>
+                <button
+                  onClick={() => {
+                    if (confirm('기본값으로 초기화할까요?')) {
+                      setAgePrograms(DEFAULT_AGE_PROGRAMS);
+                      saveAgePrograms(DEFAULT_AGE_PROGRAMS);
+                      window.dispatchEvent(new Event('storage'));
+                    }
+                  }}
+                  className="nav-btn nav-btn-outline"
+                >
+                  <RotateCcw size={15} />
+                  <span>기본값 복원</span>
+                </button>
+                <button
+                  onClick={handleSaveAgePrograms}
+                  className="nav-btn nav-btn-primary"
+                  style={{ background: '#0a4d3c', padding: '12px 28px', fontSize: '15px' }}
+                >
+                  <Save size={16} />
+                  <span>연령별 수업 저장하기</span>
+                </button>
+              </div>
             </div>
           </div>
         )}

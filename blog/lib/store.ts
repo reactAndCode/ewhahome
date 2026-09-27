@@ -40,6 +40,38 @@ export interface AuthUser {
   kidName?: string;
 }
 
+// 연령별 수업 블로그 카드 (Zone 2)
+export interface AgeBlogCard {
+  id: string;
+  image: string;      // 수업 이미지 URL
+  title: string;      // 카드 제목
+  date: string;       // '2026.09'
+  excerpt: string;    // 2-3줄 미리보기
+  tag: string;        // 카테고리 배지
+  linkUrl?: string;   // 클릭 시 이동할 링크 (새 창)
+}
+
+// 연령별 수업 불릿 항목 (Zone 3)
+export interface AgeBulletItem {
+  id: string;
+  kidPhoto: string;   // 원형 아이 사진 URL
+  headline: string;   // 짧은 제목
+  desc: string;       // 2-3줄 설명
+  linkUrl?: string;   // 클릭 시 이동할 링크 (새 창)
+}
+
+// 연령별 수업 전체 데이터
+export interface AgeProgramData {
+  id: number;
+  icon: string;           // 탭 이모지 아이콘
+  title: string;          // '초등 1·2학년'
+  sub: string;            // '독서미술과 그림일기'
+  detail: string;         // 상세 설명
+  color: string;          // 탭 포인트 컬러
+  blogCards: AgeBlogCard[];   // Zone 2 블로그 카드 2개
+  bulletItems: AgeBulletItem[]; // Zone 3 불릿 목록
+}
+
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export function getAssetUrl(path: string): string {
@@ -147,6 +179,265 @@ export const DEFAULT_KID_PHOTOS: KidActivityPhoto[] = [
   }
 ];
 
+// 연령별 수업 기본 데이터
+export const DEFAULT_AGE_PROGRAMS: AgeProgramData[] = [
+  {
+    id: 1,
+    icon: '🌱',
+    title: '6·7세 유아미술',
+    sub: '놀이로 만나는 첫 미술',
+    detail: '재료와 친해지고 오감을 자극하는 다양한 매체 탐색 및 표현의 첫걸음',
+    color: '#f59e0b',
+    blogCards: [
+      {
+        id: 'ag1-card1',
+        image: '/img/1000082847.jpg',
+        title: '손끝으로 만나는 첫 번째 색깔 이야기',
+        date: '2026.09',
+        excerpt: '핑거페인팅과 다양한 재료를 탐색하며 색깔의 혼합과 질감을 온몸으로 느끼는 수업이에요.',
+        tag: '감각 탐색',
+        linkUrl: ''
+      },
+      {
+        id: 'ag1-card2',
+        image: '/img/1000026651.jpg',
+        title: '나뭇잎으로 만든 우리 가족 도장 그림',
+        date: '2026.08',
+        excerpt: '자연물 프린팅으로 형태를 인식하고, 가족을 주제로 나만의 이야기를 담아보았어요.',
+        tag: '자연 미술',
+        linkUrl: ''
+      }
+    ],
+    bulletItems: [
+      {
+        id: 'ag1-b1',
+        kidPhoto: '/img/1000103404.jpg',
+        headline: '"와, 색이 섞여요!" 를 처음 경험합니다.',
+        desc: '파랑과 노랑이 만나 초록이 되는 순간, 아이의 눈이 반짝입니다. 재료를 두려워하지 않는 첫 걸음.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag1-b2',
+        kidPhoto: '/img/1000085952.jpg',
+        headline: '손으로 직접 빚고, 찢고, 붙입니다.',
+        desc: '가위 없이 손으로 찢어 붙이는 콜라주로 소근육을 발달시키고 조형 감각을 키워요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag1-b3',
+        kidPhoto: '/img/1000056512.jpg',
+        headline: '"나도 그릴 수 있어요!" 자신감이 생깁니다.',
+        desc: '완성도보다 과정을 칭찬하며 미술에 대한 긍정적 경험을 쌓아요.',
+        linkUrl: ''
+      }
+    ]
+  },
+  {
+    id: 2,
+    icon: '📖',
+    title: '초등 1·2학년',
+    sub: '독서미술과 그림일기',
+    detail: '이야기를 시각화하고 관찰을 통해 형태를 자연스럽게 담아내는 표현 훈련',
+    color: '#10b981',
+    blogCards: [
+      {
+        id: 'ag2-card1',
+        image: '/img/1000026651.jpg',
+        title: '「강아지똥」을 읽고 그린 봄꽃 수채화',
+        date: '2026.09',
+        excerpt: '권정생 작가의 그림책을 함께 읽고, 민들레꽃이 피어나는 장면을 수채화로 표현했어요.',
+        tag: '독서미술',
+        linkUrl: ''
+      },
+      {
+        id: 'ag2-card2',
+        image: '/img/1000085952.jpg',
+        title: '오늘 하루를 그림으로 쓰는 그림일기',
+        date: '2026.08',
+        excerpt: '학교에서 있었던 가장 기억에 남는 순간을 그림과 짧은 글로 기록하는 감성 수업.',
+        tag: '그림일기',
+        linkUrl: ''
+      }
+    ],
+    bulletItems: [
+      {
+        id: 'ag2-b1',
+        kidPhoto: '/img/1000082847.jpg',
+        headline: '책 속 장면을 머릿속에 그립니다.',
+        desc: '이야기를 듣고 상상력으로 장면을 구성하는 힘이 생겨요. 독해력과 표현력이 동시에 자랍니다.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag2-b2',
+        kidPhoto: '/img/1000026774.jpg',
+        headline: '"오늘 있었던 일" 을 색과 선으로 담습니다.',
+        desc: '그림일기를 통해 하루를 정리하는 습관이 생기고, 감정 표현 어휘도 풍부해져요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag2-b3',
+        kidPhoto: '/img/1000103404.jpg',
+        headline: '형태를 보고 따라 그리는 관찰력이 생깁니다.',
+        desc: '사물을 천천히 관찰하여 선으로 옮기는 연습으로 집중력이 눈에 띄게 향상돼요.',
+        linkUrl: ''
+      }
+    ]
+  },
+  {
+    id: 3,
+    icon: '👁️',
+    title: '초등 3·4학년',
+    sub: '관찰하고 표현하는 힘',
+    detail: '사물의 비례와 원근, 인체 동작을 스스로 관찰하여 자기만의 화풍으로 완성',
+    color: '#0a4d3c',
+    blogCards: [
+      {
+        id: 'ag3-card1',
+        image: '/img/1000056512.jpg',
+        title: '정물 관찰 소묘 — 과일 바구니의 빛과 그림자',
+        date: '2026.09',
+        excerpt: '사과와 레몬의 입체감을 명암으로 표현하며, 관찰의 깊이가 한 단계 성장했습니다.',
+        tag: '소묘·관찰화',
+        linkUrl: ''
+      },
+      {
+        id: 'ag3-card2',
+        image: '/img/1000025516.jpg',
+        title: '나의 손 동작 드로잉 — 인체 비례 기초',
+        date: '2026.08',
+        excerpt: '자신의 손을 관찰하며 비례와 관절의 움직임을 드로잉하는 관찰 훈련 수업이에요.',
+        tag: '동작드로잉',
+        linkUrl: ''
+      }
+    ],
+    bulletItems: [
+      {
+        id: 'ag3-b1',
+        kidPhoto: '/img/1000025516.jpg',
+        headline: '"왜 그렇게 생겼을까?" 를 스스로 묻습니다.',
+        desc: '대상을 그냥 그리는 것이 아니라 형태의 이유를 탐구하며 관찰력이 비약적으로 성장해요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag3-b2',
+        kidPhoto: '/img/1000056512.jpg',
+        headline: '명암으로 입체감을 만들어냅니다.',
+        desc: '빛의 방향을 이해하고 명암 단계를 조절하며 평면 위에 3D를 표현하는 감각이 생겨요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag3-b3',
+        kidPhoto: '/img/1000082847.jpg',
+        headline: '자기만의 화풍이 조금씩 보이기 시작합니다.',
+        desc: '선의 강약, 채색 방식, 구도 선택에서 아이만의 개성이 자연스럽게 묻어나기 시작해요.',
+        linkUrl: ''
+      }
+    ]
+  },
+  {
+    id: 4,
+    icon: '🎨',
+    title: '초등 5·6학년',
+    sub: '기초디자인으로 넓어지는 시야',
+    detail: '명암과 입체감, 정교한 화면 구성을 통해 완성도 높은 포트폴리오 구축',
+    color: '#7c3aed',
+    blogCards: [
+      {
+        id: 'ag4-card1',
+        image: '/img/1000110541.png',
+        title: '기초디자인 — 반복과 리듬으로 만드는 패턴',
+        date: '2026.09',
+        excerpt: '동일한 형태의 반복과 색의 배열로 시각적 리듬감을 만들어내는 기초 디자인 수업.',
+        tag: '기초디자인',
+        linkUrl: ''
+      },
+      {
+        id: 'ag4-card2',
+        image: '/img/1000085952.jpg',
+        title: '포트폴리오 구성 — 나의 작품 세계 소개하기',
+        date: '2026.08',
+        excerpt: '1년간의 작품을 선별하고 배치하여 나만의 포트폴리오를 구성하는 특별 수업이에요.',
+        tag: '포트폴리오',
+        linkUrl: ''
+      }
+    ],
+    bulletItems: [
+      {
+        id: 'ag4-b1',
+        kidPhoto: '/img/1000110541.png',
+        headline: '"색을 고르는 것도 공부예요." 를 깨닫습니다.',
+        desc: '색채 이론과 배색 원리를 배우며 의도적으로 색을 선택하는 능력이 생겨요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag4-b2',
+        kidPhoto: '/img/1000026774.jpg',
+        headline: '화면을 스스로 구성하고 연출합니다.',
+        desc: '구도, 여백, 강조점을 직접 결정하며 시각 편집 감각이 자연스럽게 길러져요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag4-b3',
+        kidPhoto: '/img/1000082847.jpg',
+        headline: '작품에 대해 스스로 설명할 수 있게 됩니다.',
+        desc: '"왜 이렇게 했어요?" 라는 질문에 자신 있게 의도와 감정을 설명하는 표현력이 생겨요.',
+        linkUrl: ''
+      }
+    ]
+  },
+  {
+    id: 5,
+    icon: '🖼️',
+    title: '중등 미술',
+    sub: '더 깊은 탐구와 표현',
+    detail: '소묘, 디자인, 융합미술을 바탕으로 깊이 있는 조형 감각과 창의적 시각 탐구',
+    color: '#dc2626',
+    blogCards: [
+      {
+        id: 'ag5-card1',
+        image: '/img/1000026774.jpg',
+        title: '인물 소묘 — 자화상으로 완성하는 나',
+        date: '2026.09',
+        excerpt: '거울을 보고 자화상을 그리며 자신을 깊이 탐구하는 감성적인 미술 수업이에요.',
+        tag: '소묘',
+        linkUrl: ''
+      },
+      {
+        id: 'ag5-card2',
+        image: '/img/1000103404.jpg',
+        title: '미술사와 함께하는 모작과 재해석',
+        date: '2026.08',
+        excerpt: '고흐, 클림트의 작품을 분석하고 자신만의 시선으로 재해석하는 창의적 모작 수업.',
+        tag: '미술사·모작',
+        linkUrl: ''
+      }
+    ],
+    bulletItems: [
+      {
+        id: 'ag5-b1',
+        kidPhoto: '/img/1000026774.jpg',
+        headline: '미술이 "공부" 임을 받아들이게 됩니다.',
+        desc: '체계적인 소묘와 색채 이론 학습을 통해 미술을 깊이 있게 탐구하는 자세가 생겨요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag5-b2',
+        kidPhoto: '/img/1000103404.jpg',
+        headline: '자신만의 작품 언어를 찾아갑니다.',
+        desc: '여러 사조와 기법을 경험하면서 자신이 끌리는 스타일과 주제가 선명해져요.',
+        linkUrl: ''
+      },
+      {
+        id: 'ag5-b3',
+        kidPhoto: '/img/1000025516.jpg',
+        headline: '입시·포트폴리오까지 탄탄히 준비합니다.',
+        desc: '기초부터 체계적으로 쌓아온 실력이 입시 미술과 전문 포트폴리오의 기반이 돼요.',
+        linkUrl: ''
+      }
+    ]
+  }
+];
+
 const IS_BROWSER = typeof window !== 'undefined';
 
 // ==============================================================================
@@ -181,6 +472,21 @@ export function getStoredCards(): BeforeAfterCardData[] {
 export function saveCards(cards: BeforeAfterCardData[]): void {
   if (!IS_BROWSER) return;
   localStorage.setItem('ewha_blog_cards', JSON.stringify(cards));
+}
+
+export function getStoredAgePrograms(): AgeProgramData[] {
+  if (!IS_BROWSER) return DEFAULT_AGE_PROGRAMS;
+  try {
+    const data = localStorage.getItem('ewha_age_programs');
+    return data ? JSON.parse(data) : DEFAULT_AGE_PROGRAMS;
+  } catch {
+    return DEFAULT_AGE_PROGRAMS;
+  }
+}
+
+export function saveAgePrograms(programs: AgeProgramData[]): void {
+  if (!IS_BROWSER) return;
+  localStorage.setItem('ewha_age_programs', JSON.stringify(programs));
 }
 
 export function getStoredKidPhotos(userId?: string): KidActivityPhoto[] {
@@ -452,29 +758,32 @@ export async function deleteKidPhoto(id: string): Promise<boolean> {
 
 /** 이메일/비밀번호 로그인 */
 export async function signInWithSupabase(email: string, password: string):Promise<{ user: AuthUser | null; error: string | null }> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const isAdminEmail = normalizedEmail === 'admin@ewhaart.co.kr' || normalizedEmail === 'admin@ewha-art.com' || normalizedEmail.startsWith('admin@');
+
   if (!isSupabaseConfigured || !supabase) {
     // Supabase 미연동시 Mock 로그인 허용
-    if (email.includes('admin')) {
-      const adminUser: AuthUser = { id: 'admin_master', email, name: '총괄 원장선생님', role: 'admin' };
+    if (isAdminEmail) {
+      const adminUser: AuthUser = { id: 'admin_master', email: normalizedEmail, name: '총괄 원장선생님', role: 'admin' };
       setCurrentUser(adminUser);
       return { user: adminUser, error: null };
     }
-    const parentUser: AuthUser = { id: 'parent_user', email, name: '학부모 회원', role: 'parent', kidName: '민지 (8세)' };
+    const parentUser: AuthUser = { id: 'parent_user', email: normalizedEmail, name: '학부모 회원', role: 'parent', kidName: '민지 (8세)' };
     setCurrentUser(parentUser);
     return { user: parentUser, error: null };
   }
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
     if (error) return { user: null, error: error.message };
 
     const sbUser = data.user;
     const metadata = sbUser.user_metadata || {};
-    const role: 'admin' | 'parent' = email.includes('admin') || metadata.role === 'admin' ? 'admin' : 'parent';
+    const role: 'admin' | 'parent' = isAdminEmail || metadata.role === 'admin' ? 'admin' : 'parent';
 
     const authUser: AuthUser = {
       id: sbUser.id,
-      email: sbUser.email || email,
+      email: sbUser.email || normalizedEmail,
       name: metadata.name || (role === 'admin' ? '총괄 원장선생님' : '학부모 회원'),
       role,
       kidName: metadata.kidName || (role === 'parent' ? '우리 아이' : undefined)
@@ -492,15 +801,19 @@ export async function signUpWithSupabase(
   email: string, 
   password: string, 
   name: string, 
-  role: 'admin' | 'parent' = 'parent',
+  role?: 'admin' | 'parent',
   kidName?: string
 ): Promise<{ user: AuthUser | null; error: string | null }> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const isAdminEmail = normalizedEmail === 'admin@ewhaart.co.kr' || normalizedEmail === 'admin@ewha-art.com' || normalizedEmail.startsWith('admin@');
+  const finalRole: 'admin' | 'parent' = role || (isAdminEmail ? 'admin' : 'parent');
+
   try {
     const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
+      email: normalizedEmail,
       password: password,
       options: {
-        data: { name: name.trim(), role, kidName: kidName || (role === 'parent' ? `${name.trim()}의 자녀` : undefined) }
+        data: { name: name.trim(), role: finalRole, kidName: kidName || (finalRole === 'parent' ? `${name.trim()}의 자녀` : undefined) }
       }
     });
 
@@ -516,10 +829,10 @@ export async function signUpWithSupabase(
 
     const authUser: AuthUser = {
       id: sbUser.id,
-      email: sbUser.email || email,
+      email: sbUser.email || normalizedEmail,
       name: name.trim(),
-      role,
-      kidName: kidName || (role === 'parent' ? `${name.trim()}의 자녀` : undefined)
+      role: finalRole,
+      kidName: kidName || (finalRole === 'parent' ? `${name.trim()}의 자녀` : undefined)
     };
 
     setCurrentUser(authUser);
@@ -549,10 +862,12 @@ export async function syncCurrentAuthUser(): Promise<AuthUser | null> {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const metadata = user.user_metadata || {};
-        const role: 'admin' | 'parent' = (user.email?.includes('admin') || metadata.role === 'admin') ? 'admin' : 'parent';
+        const normalizedEmail = (user.email || '').trim().toLowerCase();
+        const isAdminEmail = normalizedEmail === 'admin@ewhaart.co.kr' || normalizedEmail === 'admin@ewha-art.com' || normalizedEmail.startsWith('admin@');
+        const role: 'admin' | 'parent' = isAdminEmail || metadata.role === 'admin' ? 'admin' : 'parent';
         const authUser: AuthUser = {
           id: user.id,
-          email: user.email || '',
+          email: normalizedEmail,
           name: metadata.name || (role === 'admin' ? '총괄 원장선생님' : '학부모 회원'),
           role,
           kidName: metadata.kidName

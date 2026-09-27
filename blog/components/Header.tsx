@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   getCurrentUser, 
   setCurrentUser, 
@@ -19,6 +19,7 @@ import { LogIn, UserPlus, LogOut, Shield, Heart, Sparkles, AlertCircle } from 'l
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -45,7 +46,7 @@ export default function Header() {
     const demoUser: AuthUser = role === 'admin'
       ? {
         id: 'admin_master',
-        email: 'admin@ewha-art.com',
+        email: 'admin@ewhaart.co.kr',
         name: '총괄 원장선생님',
         role: 'admin'
       }
@@ -72,10 +73,13 @@ export default function Header() {
     setAuthError(null);
 
     const pwd = passwordInput || '123456';
+    const normalizedEmail = emailInput.trim().toLowerCase();
+    const isAdminEmail = normalizedEmail === 'admin@ewhaart.co.kr' || normalizedEmail === 'admin@ewhart.co.kr' || normalizedEmail === 'admin@ewha-art.com' || normalizedEmail.startsWith('admin@');
+    const assignedRole: 'admin' | 'parent' = isAdminEmail ? 'admin' : 'parent';
 
     try {
       if (authMode === 'login') {
-        const res = await signInWithSupabase(emailInput, pwd);
+        const res = await signInWithSupabase(normalizedEmail, pwd);
         if (res.error) {
           setAuthError(res.error);
         } else if (res.user) {
@@ -84,14 +88,18 @@ export default function Header() {
           setEmailInput('');
           setPasswordInput('');
           alert(`로그인되었습니다! 환영합니다, ${res.user.name}님`);
+          // admin 계정이거나 role이 admin인 경우 어드민 페이지로 이동
+          if (res.user.email === 'admin@ewhaart.co.kr' || res.user.email === 'admin@ewhart.co.kr' || res.user.role === 'admin') {
+            router.push('/admin');
+          }
         }
       } else {
         const res = await signUpWithSupabase(
-          emailInput, 
+          normalizedEmail, 
           pwd, 
-          nameInput || (roleInput === 'admin' ? '관리자' : '학부모 회원'), 
-          roleInput,
-          roleInput === 'parent' ? '내 아이' : undefined
+          nameInput || (assignedRole === 'admin' ? '총괄 원장선생님' : '학부모 회원'), 
+          assignedRole,
+          assignedRole === 'parent' ? '내 아이' : undefined
         );
         if (res.error) {
           setAuthError(res.error);
@@ -102,6 +110,9 @@ export default function Header() {
           setPasswordInput('');
           setNameInput('');
           alert(`Supabase 회원가입이 성공적으로 완료되었습니다!\n계정: ${res.user.email}\nSupabase 대시보드(Users)에서 새로고침하여 확인하실 수 있습니다.`);
+          if (res.user.email === 'admin@ewhaart.co.kr' || res.user.email === 'admin@ewhart.co.kr' || res.user.role === 'admin') {
+            router.push('/admin');
+          }
         }
       }
     } catch (err: any) {
@@ -136,12 +147,14 @@ export default function Header() {
               >
                 학부모 전환
               </button>
+              {/* 어드민 전환 버튼 주석 처리 (admin@ewhaart.co.kr 로그인으로 대체)
               <button
                 onClick={() => handleQuickLogin('admin')}
                 style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: '#fff0d9', color: '#b86200', fontWeight: 700 }}
               >
                 어드민 전환
               </button>
+              */}
             </div>
           </div>
         </div>
@@ -356,6 +369,7 @@ export default function Header() {
                 </div>
               )}
 
+              {/* 계정 권한 선택 UI 숨김 (이메일이 admin@ewhart.co.kr / admin@ewhaart.co.kr 일 때 자동 어드민, 나머지는 학부모로 자동 판별)
               <div className="form-group" style={{ marginBottom: '16px' }}>
                 <label className="form-label" style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#2d413b', marginBottom: '6px' }}>
                   계정 권한 선택
@@ -395,6 +409,7 @@ export default function Header() {
                   </button>
                 </div>
               </div>
+              */}
 
               <button
                 type="submit"

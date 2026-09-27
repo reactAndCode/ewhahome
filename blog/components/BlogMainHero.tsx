@@ -28,15 +28,13 @@ export default function BlogMainHero({ data, currentUser }: BlogMainHeroProps) {
           <div className="hero-content">
             <div className="hero-subtitle">{data.subTitle}</div>
             <h2 className="hero-title">{data.title}</h2>
-            <p className="hero-desc">
-              {data.description.split('관찰하고').length > 1 ? (
-                <>
-                  잘 그리는 법을 가르치기보다<br />
-                  <strong>관찰하고, 생각하고,<br />자기 방식으로 표현하는 힘</strong>을 키웁니다.
-                </>
-              ) : (
-                data.description
-              )}
+            <p className="hero-desc" style={{ whiteSpace: 'pre-line' }}>
+              {data.description.split(/<br\s*\/?>/gi).map((line, idx, arr) => (
+                <React.Fragment key={idx}>
+                  {line}
+                  {idx < arr.length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </p>
             <a href={data.buttonLink || '#before-after-list'} className="hero-btn">
               <span>{data.buttonText}</span>

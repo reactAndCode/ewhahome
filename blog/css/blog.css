@@ -381,6 +381,7 @@ button {
   font-weight: 400;
   margin-bottom: 36px;
   letter-spacing: -0.4px;
+  white-space: pre-line;
 }
 
 .hero-desc strong {
@@ -884,7 +885,411 @@ button {
   letter-spacing: -0.8px;
 }
 
-/* 1. 연령별 수업 (5개 카드) */
+/* ============================================================
+   연령별 수업 3-Zone 리디자인 CSS
+   ============================================================ */
+
+/* 섹션 헤더 */
+.age-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.age-section-caption {
+  font-size: 14px;
+  color: #6b9a8a;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+/* Zone 1: 탭 바 */
+.age-tabs-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.age-tabs-wrap::-webkit-scrollbar { display: none; }
+
+.age-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 20px 12px;
+  border-radius: 16px 16px 0 0;
+  border: 1.5px solid #d9ede4;
+  border-bottom: none;
+  background: #f7fbf8;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  min-width: 130px;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.age-tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--tab-color, #0a4d3c);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+  border-radius: 3px 3px 0 0;
+}
+
+.age-tab-btn:hover {
+  background: #eef9f5;
+  border-color: #b2ddd0;
+  transform: translateY(-2px);
+}
+
+.age-tab-btn.active {
+  background: #0a4d3c;
+  border-color: #0a4d3c;
+  transform: translateY(-2px);
+  box-shadow: 0 -4px 16px rgba(10,77,60,0.12);
+}
+
+.age-tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+.age-tab-icon {
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.age-tab-btn:hover .age-tab-icon,
+.age-tab-btn.active .age-tab-icon {
+  transform: scale(1.15);
+}
+
+.age-tab-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0b4536;
+  transition: color 0.2s;
+}
+
+.age-tab-sub {
+  font-size: 11px;
+  color: #7a9990;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+
+.age-tab-btn.active .age-tab-title,
+.age-tab-btn.active .age-tab-sub {
+  color: #ffffff;
+}
+
+/* 성장 타임라인 진행 바 */
+.age-progress-bar {
+  width: 100%;
+  height: 3px;
+  background: #d9ede4;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.age-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #25b89a, #0a4d3c);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Zone 2+3: 콘텐츠 래퍼 */
+.age-content-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: stretch;
+  margin-bottom: 54px;
+}
+
+/* Zone 2: 블로그 카드 — display:contents로 카드를 그리드 직접 자식으로 */
+.age-blog-cards {
+  display: contents;
+}
+
+.age-blog-card {
+  background: #ffffff;
+  border: 1px solid #e2ebe6;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(10,77,60,0.06);
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.25s ease;
+  animation: cardFadeInUp 0.35s ease both;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+@keyframes cardFadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.age-blog-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(10,77,60,0.14);
+}
+
+.age-blog-card-img-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  overflow: hidden;
+  background: #e5f0eb;
+}
+
+.age-blog-card-img-wrap img {
+  transition: transform 0.4s ease;
+}
+
+.age-blog-card:hover .age-blog-card-img-wrap img {
+  transform: scale(1.04);
+}
+
+/* 연령 배지 */
+.age-blog-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+/* 날짜 스탬프 */
+.age-blog-date {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(10,77,60,0.72);
+  padding: 3px 8px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+.age-blog-card-body {
+  padding: 16px 18px 18px;
+}
+
+.age-blog-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0a4d3c;
+  background: #e3f4ec;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.age-blog-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0d2e26;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  word-break: keep-all;
+}
+
+.age-blog-excerpt {
+  font-size: 13px;
+  color: #5a7269;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.age-blog-more {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0a4d3c;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s ease;
+}
+
+.age-blog-card:hover .age-blog-more {
+  gap: 8px;
+}
+
+/* Zone 3: 불릿 패널 */
+.age-bullet-panel {
+  background: #f7fbf9;
+  border: 1px solid #d5e9e0;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.age-bullet-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 22px 16px;
+  background: #0a4d3c;
+  border-radius: 0;
+}
+
+.age-bullet-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.age-bullet-panel-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.age-bullet-panel-sub {
+  font-size: 12px;
+  color: #a8d8c8;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.age-bullet-list {
+  padding: 0;
+}
+
+.age-bullet-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px dashed #c8e0d6;
+  transition: background 0.2s ease;
+  animation: cardFadeInUp 0.3s ease both;
+}
+
+.age-bullet-item:last-child {
+  border-bottom: none;
+}
+
+.age-bullet-item.clickable {
+  cursor: pointer;
+}
+
+.age-bullet-item.clickable:hover {
+  background: #eef9f4;
+}
+
+.age-bullet-photo-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  border: 3px solid #6ce0c6;
+  transition: border-color 0.2s, transform 0.2s;
+  background: #e5f0eb;
+}
+
+.age-bullet-item:hover .age-bullet-photo-wrap {
+  border-color: #0a4d3c;
+  transform: scale(1.08);
+}
+
+.age-bullet-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.age-bullet-headline {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0b3d30;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.age-bullet-desc {
+  font-size: 12px;
+  color: #5a7269;
+  line-height: 1.55;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.age-bullet-ext-icon {
+  color: #0a4d3c;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.age-bullet-item:hover .age-bullet-ext-icon {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .age-content-wrap {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .age-content-wrap {
+    grid-template-columns: 1fr;
+  }
+  .age-tabs-wrap {
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+  }
+  .age-tab-btn {
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+}
+
+/* 1. 연령별 수업 (5개 카드) - 구 디자인 유지 (하위호환) */
 .age-cards-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -897,6 +1302,7 @@ button {
   border: 1px solid #d9ede4;
   border-radius: 18px;
   padding: 24px 18px;
+
   text-align: center;
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   cursor: pointer;
