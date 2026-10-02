@@ -92,19 +92,31 @@
       letter-spacing: 0.3px;
     }
     .share-btn {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #ffffff;
+      background: #FEE500;
+      color: #191919;
       border: none;
-      padding: 8px 14px;
+      padding: 7px 14px;
       border-radius: 20px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-      transition: transform 0.15s ease, background 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(254, 229, 0, 0.25);
+      transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s;
+    }
+    .share-btn:hover {
+      background: #fada0a;
+      box-shadow: 0 4px 16px rgba(254, 229, 0, 0.4);
     }
     .share-btn:active {
       transform: scale(0.96);
+    }
+    .share-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
     }
     .card-container {
       width: 100%;
@@ -257,19 +269,24 @@
         <span class="logo-sub-text">이화미술공작소 · KIDS ATELIER</span>
       </div>
     </a>
-    <button class="share-btn" onclick="shareCardNews()">공유하기</button>
+    <button class="share-btn" onclick="shareKakao()">
+      <svg viewBox="0 0 24 24" fill="#191919">
+        <path d="M12 3C6.48 3 2 6.58 2 11c0 2.85 1.87 5.36 4.69 6.72-.21.77-.77 2.78-.88 3.22-.14.54.2.53.42.39.29-.19 3.96-2.68 4.61-3.13.38.05.77.08 1.16.08 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/>
+      </svg>
+      카톡 공유
+    </button>
   </header>
 
   <main class="card-container">
     <div class="swiper">
       <div class="swiper-wrapper">
-        <div class="swiper-slide"><img src="img/01_cover.png" alt="카드뉴스 1"></div>
-        <div class="swiper-slide"><img src="img/02_card1.png" alt="카드뉴스 2"></div>
-        <div class="swiper-slide"><img src="img/03_card2.png" alt="카드뉴스 3"></div>
-        <div class="swiper-slide"><img src="img/04_card3.png" alt="카드뉴스 4"></div>
-        <div class="swiper-slide"><img src="img/05_card4.png" alt="카드뉴스 5"></div>
-        <div class="swiper-slide"><img src="img/06_card5.png" alt="카드뉴스 6"></div>
-        <div class="swiper-slide"><img src="img/07_end.png" alt="카드뉴스 7"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/01_cover.png" alt="카드뉴스 1"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/02_card1.png" alt="카드뉴스 2"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/03_card2.png" alt="카드뉴스 3"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/04_card3.png" alt="카드뉴스 4"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/05_card4.png" alt="카드뉴스 5"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/06_card5.png" alt="카드뉴스 6"></div>
+        <div class="swiper-slide"><img src="/blog/cardNews/img/07_end.png" alt="카드뉴스 7"></div>
       </div>
     </div>
 
@@ -286,8 +303,8 @@
     </div>
 
     <div class="actions-bar">
-      <a href="https://www.ewhaart.co.kr" class="home-link-btn">
-        홈페이지 바로가기 ↗
+      <a href="https://blog.naver.com/sodamc93/224426901711" target="_blank" rel="noopener noreferrer" class="home-link-btn">
+        글상세 보기 ↗
       </a>
       <a href="https://www.ewhaart.co.kr/blog" class="home-link-btn">
         블로그 소식 보기 ↗
@@ -299,7 +316,19 @@
 
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- Kakao SDK -->
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2mFxE6YZnGxuxja6RO0o9wgKtuetnp5nWC401PTRTCY" crossorigin="anonymous"></script>
+
   <script>
+    // 카카오 SDK 초기화
+    try {
+      if (window.Kakao && !window.Kakao.isInitialized()) {
+        window.Kakao.init('e3a79d305608d085df7cb8ce8d893eb6');
+      }
+    } catch (e) {
+      console.warn('Kakao init error:', e);
+    }
+
     const swiper = new Swiper('.swiper', {
       slidesPerView: 1,
       spaceBetween: 10,
@@ -328,38 +357,81 @@
       }, 2500);
     }
 
-    async function shareCardNews() {
-      const shareData = {
-        title: '이화아트스쿨 카드뉴스',
-        text: '이화아트스쿨 카드뉴스를 확인해보세요.',
-        url: window.location.href,
-      };
+    function shareKakao() {
+      const currentUrl = 'https://www.ewhaart.co.kr/blog/cardNews/261022';
+      const imgUrl = 'https://www.ewhaart.co.kr/blog/cardNews/img/01_cover.png';
+      const title = '요즘 아이들에게 부쩍 보이는 5가지 모습';
+      const description = '지금 놓치면 5년 뒤 바로잡기 어려울 수 있어요 | 이화미술공작소';
 
-      if (navigator.share) {
+      // 1. 카카오톡 공식 공유 API 시도
+      if (window.Kakao && window.Kakao.isInitialized() && window.Kakao.Share) {
         try {
-          await navigator.share(shareData);
+          window.Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+              title: title,
+              description: description,
+              imageUrl: imgUrl,
+              link: {
+                mobileWebUrl: currentUrl,
+                webUrl: currentUrl,
+              },
+            },
+            buttons: [
+              {
+                title: '카드뉴스 보러가기',
+                link: {
+                  mobileWebUrl: currentUrl,
+                  webUrl: currentUrl,
+                },
+              },
+            ],
+          });
+          return;
         } catch (err) {
+          console.error('Kakao Share Error:', err);
+        }
+      }
+
+      // 2. 모바일 브라우저 네이티브 공유창 (카카오톡 선택 가능)
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: description,
+          url: currentUrl,
+        }).catch((err) => {
           if (err.name !== 'AbortError') {
             copyUrl();
           }
-        }
-      } else {
-        copyUrl();
+        });
+        return;
       }
+
+      // 3. Fallback: 클립보드 복사
+      copyUrl();
     }
 
     function copyUrl() {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        showToast('링크가 클립보드에 복사되었습니다!');
-      }).catch(() => {
-        const temp = document.createElement('input');
-        temp.value = window.location.href;
-        document.body.appendChild(temp);
-        temp.select();
-        document.execCommand('copy');
-        document.body.removeChild(temp);
-        showToast('링크가 클립보드에 복사되었습니다!');
-      });
+      const urlToCopy = 'https://www.ewhaart.co.kr/blog/cardNews/261022';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(urlToCopy).then(() => {
+          showToast('카드뉴스 링크가 복사되었습니다! 카톡에 붙여넣기 해보세요.');
+        }).catch(() => {
+          fallbackCopy(urlToCopy);
+        });
+      } else {
+        fallbackCopy(urlToCopy);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const temp = document.createElement('input');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      showToast('카드뉴스 링크가 복사되었습니다! 카톡에 붙여넣기 해보세요.');
     }
   </script>
 </body>
